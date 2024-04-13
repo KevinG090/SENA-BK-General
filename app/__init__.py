@@ -1,8 +1,19 @@
 from fastapi import APIRouter
 
+from schemas.responses_model.common import StatusService
+from app import routes
+
+
 api_router = APIRouter()
 
-@api_router.get("/")
+@api_router.get("/", response_model=StatusService,tags=["Status Service"])
 def validate_service():
-    """Endpoint for validating responses from sevice"""
-    return {"Service": "Service ok!"}
+    """Endpoint for validating responses from service."""
+    return StatusService(service="Service ok!")
+
+api_router.include_router(
+    routes.router,
+    prefix="/api",
+    # tags=[""],
+    # responses=responses_handlers
+)
