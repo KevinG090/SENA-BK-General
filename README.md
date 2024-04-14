@@ -16,7 +16,7 @@ pip install -r .\requirements.txt
 
 ## Ejecutar aplicacion localmente
 ```bash
-uvicorn main:app --reload
+uvicorn application:application --reload
 ```
 
 ## Guardar nuevas dependencias del entorno virtual

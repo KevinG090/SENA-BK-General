@@ -2,14 +2,16 @@
 
 from fastapi import APIRouter, Depends
 from core.config import get_settings
+from db.queries.cursos import CursosQueries
+
 
 router = APIRouter()
 
 
 @router.get("/listar-cursos")
-def get_list_courses():
+async def get_list_courses():
     """"""
-    return [{"cursos":""}]
+    return await CursosQueries().lista_paginada_cursos()
 
 @router.post("/crear-cursos")
 def create_course():

@@ -1,7 +1,7 @@
 """ Connection to db basics """
 
-from typing import TypeVar, Generic
-
+from typing import TypeVar, Generic, Any
+from fastapi import FastAPI, Depends
 from pydantic import BaseModel
 
 from psycopg_pool import (
@@ -11,9 +11,7 @@ from psycopg_pool import (
     NullConnectionPool,
 )
 
-from core.config import get_settings
-from application import application
-
+from core.config import get_settings, _app as application
 
 T = TypeVar("T", ConnectionPool, AsyncConnectionPool)
 
@@ -31,59 +29,74 @@ class DBInstanceType(BaseModel, Generic[T]):
 
 
 class DBPoolDispatcher(BaseModel):
-    """Get db conections"""
+    """Get db connections"""
 
     sync_pool: DBInstanceType[NullConnectionPool]
     async_pool: DBInstanceType[AsyncNullConnectionPool]
 
 
+def create_connection_pool(uri: str, max_size: int, name: str) -> ConnectionPool:
+    """Creates a connection pool based on type (sync or async)"""
+    if isinstance(application, FastAPI):  # Assuming application is a FastAPI instance
+        if "async" in name:  # Check if name suggests asynchronous pool
+            return AsyncNullConnectionPool(str(uri).replace(" ",""), open=False, max_size=max_size, name=name)
+        else:
+            return NullConnectionPool(str(uri).replace(" ",""), open=False, max_size=max_size, name=name)
+    else:
+        raise ValueError("Application instance is not a FastAPI object")
+
+
 pool_dispatcher = DBPoolDispatcher(
     sync_pool=DBInstanceType[NullConnectionPool](
-        read=NullConnectionPool(
+        read=create_connection_pool(
             get_settings().SQLALCHEMY_DATABASE_READ_URI or "",
-            open=False,
-            max_size=get_settings().POOL_MAX_SIZE,
-            name="sync-read-pool",
+            get_settings().POOL_MAX_SIZE,
+            "sync-read-pool",
         ),
-        write=NullConnectionPool(
+        write=create_connection_pool(
             get_settings().SQLALCHEMY_DATABASE_WRITE_URI or "",
-            open=False,
-            max_size=get_settings().POOL_MAX_SIZE,
-            name="sync-write-pool",
+            get_settings().POOL_MAX_SIZE,
+            "sync-write-pool",
         ),
     ),
     async_pool=DBInstanceType[AsyncNullConnectionPool](
-        read=AsyncNullConnectionPool(
+        read=create_connection_pool(
             get_settings().SQLALCHEMY_DATABASE_READ_URI or "",
-            open=False,
-            max_size=get_settings().POOL_MAX_SIZE,
-            name="async-read-pool",
+            get_settings().POOL_MAX_SIZE,
+            "async-read-pool",
         ),
-        write=AsyncNullConnectionPool(
+        write=create_connection_pool(
             get_settings().SQLALCHEMY_DATABASE_WRITE_URI or "",
-            open=False,
-            max_size=get_settings().POOL_MAX_SIZE,
-            name="async-write-pool",
+            get_settings().POOL_MAX_SIZE,
+            "async-write-pool",
         ),
     ),
 )
 
 
-@application.on_event("startup")
-async def open_pool():
-    """function to open db pool when application starts"""
+async def open_pool(app: FastAPI = Depends(application)):
+    """Function to open database pool when application starts"""
 
-    pool_dispatcher.sync_pool.read.open()
-    pool_dispatcher.sync_pool.write.open()
-    await pool_dispatcher.async_pool.read.open()
-    await pool_dispatcher.async_pool.write.open()
+    if isinstance(application, FastAPI):  # Check if application is a FastAPI instance
+        pool_dispatcher.sync_pool.read.open()
+        pool_dispatcher.sync_pool.write.open()
+        await pool_dispatcher.async_pool.read.open()
+        await pool_dispatcher.async_pool.write.open()
+    else:
+        raise ValueError("Application instance is not a FastAPI object")
 
 
-@application.on_event("shutdown")
-async def close_pool():
-    """function to close db pool when application shutdowns"""
+async def close_pool(app: FastAPI = Depends(application)):
+    """Function to close database pool when application shutdowns"""
 
-    pool_dispatcher.sync_pool.read.close()
-    pool_dispatcher.sync_pool.write.close()
-    await pool_dispatcher.async_pool.read.close()
-    await pool_dispatcher.async_pool.write.close()
+    if isinstance(application, FastAPI):  # Check if application is a FastAPI instance
+        pool_dispatcher.sync_pool.read.close()
+        pool_dispatcher.sync_pool.write.close()
+        await pool_dispatcher.async_pool.read.close()
+        await pool_dispatcher.async_pool.write.close()
+    else:
+        raise ValueError("Application instance is not a FastAPI object")
+
+
+application.add_event_handler("startup", open_pool)
+application.add_event_handler("shutdown", close_pool)
