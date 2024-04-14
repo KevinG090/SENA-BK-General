@@ -1,8 +1,7 @@
 import math
-
-from datetime import timedelta, datetime, date
 from contextlib import asynccontextmanager
-from typing import List, Any, Dict, Optional, Union
+from datetime import date, datetime, timedelta
+from typing import Any, Dict, List, Optional, Union
 
 from psycopg.rows import dict_row
 
@@ -21,17 +20,15 @@ class CursosQueries:
     ) -> list:
         data = {
             "pk_id_curso": pk_id_curso,
-            "nombre_curso": (
-                nombre_curso.upper() if not nombre_curso is None else None
-            ),
+            "nombre_curso": nombre_curso.upper() if not nombre_curso is None else None,
         }
 
         query = """
-            SELECT 
+            SELECT
                 pk_id_curso,
                 nombre_curso
             FROM public.tbl_cursos
-            WHERE 
+            WHERE
                 pk_id_curso::TEXT LIKE COALESCE(
                     '%%'||%(pk_id_curso)s||'%%',
                     pk_id_curso::TEXT

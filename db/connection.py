@@ -1,17 +1,18 @@
 """ Connection to db basics """
 
-from typing import TypeVar, Generic, Any
-from fastapi import FastAPI, Depends
-from pydantic import BaseModel
+from typing import Generic, TypeVar
 
+from fastapi import Depends, FastAPI
 from psycopg_pool import (
-    ConnectionPool,
     AsyncConnectionPool,
     AsyncNullConnectionPool,
+    ConnectionPool,
     NullConnectionPool,
 )
+from pydantic import BaseModel
 
-from core.config import get_settings, _app as application
+from core.config import _app as application
+from core.config import get_settings
 
 T = TypeVar("T", ConnectionPool, AsyncConnectionPool)
 
@@ -39,9 +40,13 @@ def create_connection_pool(uri: str, max_size: int, name: str) -> ConnectionPool
     """Creates a connection pool based on type (sync or async)"""
     if isinstance(application, FastAPI):  # Assuming application is a FastAPI instance
         if "async" in name:  # Check if name suggests asynchronous pool
-            return AsyncNullConnectionPool(str(uri).replace(" ",""), open=False, max_size=max_size, name=name)
+            return AsyncNullConnectionPool(
+                str(uri).replace(" ", ""), open=False, max_size=max_size, name=name
+            )
         else:
-            return NullConnectionPool(str(uri).replace(" ",""), open=False, max_size=max_size, name=name)
+            return NullConnectionPool(
+                str(uri).replace(" ", ""), open=False, max_size=max_size, name=name
+            )
     else:
         raise ValueError("Application instance is not a FastAPI object")
 

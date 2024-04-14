@@ -1,26 +1,18 @@
-
-from typing import List, Union
-
 from functools import lru_cache
-from typing import Any, Dict, List, Optional, Union
-from pydantic import AnyHttpUrl, field_validator, Field,PostgresDsn,ValidationInfo
+from typing import Any, List, Optional, Union
+
+from fastapi import Depends, FastAPI
+from pydantic import AnyHttpUrl, Field, PostgresDsn, ValidationInfo, field_validator
 from pydantic_settings import BaseSettings
 
-
-from schemas.tags import (
-    description,
-    tags_metadata,
-    extra_info,
-)
-
-from fastapi import FastAPI, Depends, Request, Response
+from schemas.tags import description, extra_info, tags_metadata
 
 
 class Settings(BaseSettings):
     PROJECT_NAME: str
     BACKEND_CORS_ORIGINS: List[AnyHttpUrl] = []
 
-    @field_validator("BACKEND_CORS_ORIGINS",mode="before")
+    @field_validator("BACKEND_CORS_ORIGINS", mode="before")
     def assemble_cors_origins(cls, v: Union[str, List[str]]) -> Union[List[str], str]:
         if isinstance(v, str) and not v.startswith("["):
             return [i.strip() for i in v.split(",")]
@@ -48,11 +40,13 @@ class Settings(BaseSettings):
     POOL_MIN_SIZE: int = Field(..., ge=0)
     POOL_MAX_IDLE: int = Field(..., ge=0)
 
-    @field_validator("SQLALCHEMY_DATABASE_READ_URI",mode="before")
+    @field_validator("SQLALCHEMY_DATABASE_READ_URI", mode="before")
     @classmethod
-    def assemble_db_connection_read(cls, value: Optional[str], values: ValidationInfo) -> Any:
+    def assemble_db_connection_read(
+        cls, value: Optional[str], values: ValidationInfo
+    ) -> Any:
         """Build postgres uri"""
-        data : dict|str = values.data
+        data: dict | str = values.data
 
         if isinstance(data, str):
             return value
@@ -65,12 +59,12 @@ class Settings(BaseSettings):
             path=f"{data.get('POSTGRES_READ_DB') or ''}",
         )
 
-    @field_validator("SQLALCHEMY_DATABASE_WRITE_URI",mode="before")
+    @field_validator("SQLALCHEMY_DATABASE_WRITE_URI", mode="before")
     def assemble_db_connection_write(
         cls, value: Optional[str], values: ValidationInfo
     ) -> Any:
         """Build postgres uri"""
-        data : dict|str = values.data
+        data: dict | str = values.data
 
         if isinstance(value, str):
             return value
@@ -82,7 +76,6 @@ class Settings(BaseSettings):
             port=data.get("POSTGRES_WRITE_PORT", ""),
             path=f"{data.get('POSTGRES_WRITE_DB') or ''}",
         )
-    
 
     class Config:
         """Config class"""
@@ -103,6 +96,6 @@ _app = FastAPI(
     description=description,
     # openapi_url=f"{get_settings().API_V1_STR}/openapi.json",
     dependencies=[Depends(get_settings)],
-    openapi_tags= tags_metadata,
-    terms_of_service = extra_info.get("repositorio",""),
+    openapi_tags=tags_metadata,
+    terms_of_service=extra_info.get("repositorio", ""),
 )

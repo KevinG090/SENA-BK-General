@@ -1,12 +1,9 @@
 """"""
 
 from fastapi import APIRouter, Depends
+
+from app.routes import cursos, materias, users
 from core.config import get_settings
-from app.routes import (
-    cursos,
-    users,
-    materias,
-)
 
 router = APIRouter()
 

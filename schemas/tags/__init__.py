@@ -5,7 +5,7 @@ Este es el proyecto base para **SENA**
 
 extra_info = {
     "repositorio": "https://github.com/KevinG090/SENA-BK-General",
-    "autor" : "Kevin Guevara"
+    "autor": "Kevin Guevara",
 }
 
 tags_metadata = [
