@@ -9,6 +9,8 @@ from schemas.tags import description, extra_info, tags_metadata
 
 
 class Settings(BaseSettings):
+    """Configuracion y captura de variables de entorno"""
+
     PROJECT_NAME: str
     BACKEND_CORS_ORIGINS: List[AnyHttpUrl] = []
 
@@ -91,6 +93,7 @@ def get_settings() -> Settings:
     return Settings()  # type: ignore
 
 
+# Configuracion del entorno
 _app = FastAPI(
     title=get_settings().PROJECT_NAME,
     description=description,

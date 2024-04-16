@@ -1,17 +1,26 @@
 """"""
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter
+from psycopg2.errors import Error as PGError
 
-from core.config import get_settings
 from db.queries.cursos import CursosQueries
+from schemas.responses_model.common import EnumErrors
 
 router = APIRouter()
 
 
 @router.get("/listar-cursos")
 async def get_list_courses():
-    """"""
-    return await CursosQueries().lista_paginada_cursos()
+    """Metodo para listar los cursos de manera paginada"""
+
+    try:
+        res = await CursosQueries().lista_paginada_cursos()
+    except PGError as e:
+        raise Exception(f"{EnumErrors.ERROR_QUERY}: {e}")
+    except Exception as e:
+        raise Exception(f"{EnumErrors.ERROR_INESPERADO}: {e}")
+
+    return res
 
 
 @router.post("/crear-cursos")
