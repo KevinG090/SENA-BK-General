@@ -9,7 +9,7 @@ from db.connection import pool_dispatcher
 
 
 class CursosQueries:
-    """"""
+    """Clase para queries de los cursos"""
 
     @staticmethod
     async def lista_paginada_cursos(
