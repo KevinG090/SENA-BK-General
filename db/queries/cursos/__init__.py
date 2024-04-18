@@ -1,7 +1,5 @@
 import math
-from contextlib import asynccontextmanager
-from datetime import date, datetime, timedelta
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional
 
 from psycopg.rows import dict_row
 
@@ -17,7 +15,7 @@ class CursosQueries:
         offset: int = 0,
         pk_id_curso: Optional[str] = None,
         nombre_curso: Optional[str] = None,
-    ) -> list:
+    ) -> Dict[str, Any]:
         data = {
             "pk_id_curso": pk_id_curso,
             "nombre_curso": nombre_curso.upper() if not nombre_curso is None else None,
@@ -58,7 +56,7 @@ class CursosQueries:
 
                 await cursor.execute(query_pag, data)
 
-                res_count: dict = await cursor.fetchone()
+                res_count: Any | dict[str, Any] = await cursor.fetchone()
                 max_elems = res_count.get("count", len(res))
                 max_pages = math.ceil(max_elems / limit)
 
