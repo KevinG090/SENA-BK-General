@@ -1,6 +1,6 @@
 """ Connection to db basics """
 
-from typing import Generic, TypeVar
+from typing import Any, Generic, TypeVar
 
 from fastapi import Depends, FastAPI
 from psycopg_pool import (
@@ -11,7 +11,7 @@ from psycopg_pool import (
 )
 from pydantic import BaseModel
 
-from core.config import _app as application
+from core.config import app as application
 from core.config import get_settings
 
 T = TypeVar("T", ConnectionPool, AsyncConnectionPool)
@@ -36,7 +36,7 @@ class DBPoolDispatcher(BaseModel):
     async_pool: DBInstanceType[AsyncNullConnectionPool]
 
 
-def create_connection_pool(uri: str, max_size: int, name: str) -> ConnectionPool:
+def create_connection_pool(uri: Any, max_size: int, name: str) -> Any:
     """Creates a connection pool based on type (sync or async)"""
     if isinstance(application, FastAPI):  # Assuming application is a FastAPI instance
         if "async" in name:  # Check if name suggests asynchronous pool

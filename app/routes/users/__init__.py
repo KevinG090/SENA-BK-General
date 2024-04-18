@@ -1,8 +1,6 @@
 """"""
 
-from fastapi import APIRouter, Depends
-
-from core.config import get_settings
+from fastapi import APIRouter
 
 router = APIRouter()
 
