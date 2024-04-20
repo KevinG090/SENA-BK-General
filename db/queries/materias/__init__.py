@@ -18,7 +18,9 @@ class MateriasQueries:
     ) -> Dict[str, Any]:
         data = {
             "pk_id_materias": pk_id_materias,
-            "nombre_materias": nombre_materias.upper() if not nombre_materias is None else None,
+            "nombre_materias": (
+                nombre_materias.upper() if not nombre_materias is None else None
+            ),
         }
 
         query = """

@@ -16,6 +16,8 @@ pip install -r .\requirements.txt
 
 ## Ejecutar aplicacion localmente
 ```bash
+uvicorn app.api:app --reload
+uvicorn main:app --reload 
 uvicorn application:application --reload
 ```
 

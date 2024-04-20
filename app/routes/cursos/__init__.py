@@ -1,7 +1,7 @@
 """"""
 
 from fastapi import APIRouter
-from psycopg2.errors import Error as PGError
+from psycopg.errors import Error as PGError
 
 from db.queries.cursos import CursosQueries
 from schemas.responses_model.common import EnumErrors

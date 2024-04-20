@@ -2,6 +2,7 @@ from functools import lru_cache
 from typing import Any, Dict, List, Optional, Union
 
 from fastapi import Depends, FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import AnyHttpUrl, Field, PostgresDsn, ValidationInfo, field_validator
 from pydantic_core import MultiHostHost
 from pydantic_settings import BaseSettings
@@ -25,17 +26,17 @@ class Settings(BaseSettings):
         raise ValueError(v)
 
     ## DB
-    POSTGRES_READ_SERVER: str
-    POSTGRES_READ_PORT: int
-    POSTGRES_READ_USER: str
-    POSTGRES_READ_PASSWORD: str
-    POSTGRES_READ_DB: str
+    POSTGRES_READ_SERVER: str = "ep-holy-cake-a4sp2u1o-pooler.us-east-1.aws.neon.tech"
+    POSTGRES_READ_PORT: int = 5432
+    POSTGRES_READ_USER: str = "default"
+    POSTGRES_READ_PASSWORD: str = "heJ0DCk7bKgt"
+    POSTGRES_READ_DB: str = "verceldb"
 
-    POSTGRES_WRITE_SERVER: str
-    POSTGRES_WRITE_PORT: int
-    POSTGRES_WRITE_USER: str
-    POSTGRES_WRITE_PASSWORD: str
-    POSTGRES_WRITE_DB: str
+    POSTGRES_WRITE_SERVER: str = "ep-holy-cake-a4sp2u1o-pooler.us-east-1.aws.neon.tech"
+    POSTGRES_WRITE_PORT: int = 5432
+    POSTGRES_WRITE_USER: str = "default"
+    POSTGRES_WRITE_PASSWORD: str = "heJ0DCk7bKgt"
+    POSTGRES_WRITE_DB: str = "verceldb"
 
     SQLALCHEMY_DATABASE_READ_URI: Optional[PostgresDsn] = None
     SQLALCHEMY_DATABASE_WRITE_URI: Optional[PostgresDsn] = None
@@ -49,7 +50,7 @@ class Settings(BaseSettings):
         cls, value: Optional[str], values: ValidationInfo
     ) -> Union[MultiHostHost, str]:
         """Build postgres uri"""
-        data: Dict[str, Any] = values.data
+        data: Dict[str, Any] = values.data  # type: ignore
 
         if isinstance(value, str):
             return value
@@ -58,7 +59,7 @@ class Settings(BaseSettings):
             username=data.get("POSTGRES_READ_USER"),
             password=data.get("POSTGRES_READ_PASSWORD"),
             host=data.get("POSTGRES_READ_SERVER", ""),
-            port=data.get("POSTGRES_READ_PORT", ""),
+            port=data.get("POSTGRES_READ_PORT"),
             path=f"{data.get('POSTGRES_READ_DB') or ''}",
         )
 
@@ -67,7 +68,7 @@ class Settings(BaseSettings):
         cls, value: Optional[str], values: ValidationInfo
     ) -> Union[MultiHostHost, str]:
         """Build postgres uri"""
-        data: Dict[str, Any] = values.data
+        data: Dict[str, Any] = values.data  # type: ignore
 
         if isinstance(value, str):
             return value
@@ -76,7 +77,7 @@ class Settings(BaseSettings):
             username=data.get("POSTGRES_WRITE_USER"),
             password=data.get("POSTGRES_WRITE_PASSWORD"),
             host=data.get("POSTGRES_WRITE_SERVER", ""),
-            port=data.get("POSTGRES_WRITE_PORT", ""),
+            port=data.get("POSTGRES_WRITE_PORT"),
             path=f"{data.get('POSTGRES_WRITE_DB') or ''}",
         )
 
@@ -103,3 +104,18 @@ app = FastAPI(
     openapi_tags=tags_metadata,
     terms_of_service=extra_info.get("repositorio", ""),
 )
+
+
+def get_application():
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=[str(origin) for origin in get_settings().BACKEND_CORS_ORIGINS],
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
+
+    return app
+
+
+application = get_application()

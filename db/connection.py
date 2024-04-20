@@ -38,6 +38,7 @@ class DBPoolDispatcher(BaseModel):
 
 def create_connection_pool(uri: Any, max_size: int, name: str) -> Any:
     """Creates a connection pool based on type (sync or async)"""
+    print(uri)
     if isinstance(application, FastAPI):  # Assuming application is a FastAPI instance
         if "async" in name:  # Check if name suggests asynchronous pool
             return AsyncNullConnectionPool(
