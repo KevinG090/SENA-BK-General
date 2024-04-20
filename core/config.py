@@ -26,17 +26,19 @@ class Settings(BaseSettings):
         raise ValueError(v)
 
     ## DB
-    POSTGRES_READ_SERVER: str = "ep-holy-cake-a4sp2u1o-pooler.us-east-1.aws.neon.tech"
-    POSTGRES_READ_PORT: int = 5432
-    POSTGRES_READ_USER: str = "default"
-    POSTGRES_READ_PASSWORD: str = "heJ0DCk7bKgt"
-    POSTGRES_READ_DB: str = "verceldb"
+    POSTGRES_READ_SERVER: str
+    POSTGRES_READ_PORT: int
+    POSTGRES_READ_USER: str
+    POSTGRES_READ_PASSWORD: str
+    POSTGRES_READ_DB: str
 
-    POSTGRES_WRITE_SERVER: str = "ep-holy-cake-a4sp2u1o-pooler.us-east-1.aws.neon.tech"
-    POSTGRES_WRITE_PORT: int = 5432
-    POSTGRES_WRITE_USER: str = "default"
-    POSTGRES_WRITE_PASSWORD: str = "heJ0DCk7bKgt"
-    POSTGRES_WRITE_DB: str = "verceldb"
+    POSTGRES_WRITE_SERVER: str
+    POSTGRES_WRITE_PORT: int
+    POSTGRES_WRITE_USER: str
+    POSTGRES_WRITE_PASSWORD: str
+    POSTGRES_WRITE_DB: str
+
+    POSTGRES_URL_TEMP: str
 
     SQLALCHEMY_DATABASE_READ_URI: Optional[PostgresDsn] = None
     SQLALCHEMY_DATABASE_WRITE_URI: Optional[PostgresDsn] = None
@@ -55,7 +57,7 @@ class Settings(BaseSettings):
         if isinstance(value, str):
             return value
         return PostgresDsn.build(  # type: ignore
-            scheme="postgresql",
+            scheme="postgres",
             username=data.get("POSTGRES_READ_USER"),
             password=data.get("POSTGRES_READ_PASSWORD"),
             host=data.get("POSTGRES_READ_SERVER", ""),
@@ -73,7 +75,7 @@ class Settings(BaseSettings):
         if isinstance(value, str):
             return value
         return PostgresDsn.build(  # type: ignore
-            scheme="postgresql",
+            scheme="postgres",
             username=data.get("POSTGRES_WRITE_USER"),
             password=data.get("POSTGRES_WRITE_PASSWORD"),
             host=data.get("POSTGRES_WRITE_SERVER", ""),
