@@ -7,7 +7,6 @@ from psycopg.errors import Error as PGError
 
 from db.queries.cursos import CursosQueries, EventosQueries
 from schemas.responses_model.common import (
-    CreateResponse,
     EnumErrors,
     EnumMsg,
     ResponseBase,
@@ -46,7 +45,7 @@ async def get_list_courses(
 
 
 @router.get("/listar-eventos")
-async def get_list_courses(
+async def get_list_eventos(
     limit: int = 10,
     page: int = 1,
     fk_id_curso: Optional[str] = None,

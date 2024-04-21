@@ -1,16 +1,14 @@
 import json
-import math
-from contextlib import contextmanager
-from datetime import datetime, timedelta
-from decimal import Decimal
-from typing import Any, Dict, Generator, List, Literal, Optional, Union
 
-from psycopg2 import extras, sql
-from psycopg2.extensions import register_adapter
+from datetime import datetime
+from decimal import Decimal
+from typing import Any, List
+
+from psycopg2 import extras
 
 
 class JSONEncoder(json.JSONEncoder):
-    def default(self, o):
+    def default(self, o: Any):
         if isinstance(o, Decimal):
             return float(o)
         elif isinstance(o, datetime):
@@ -19,12 +17,12 @@ class JSONEncoder(json.JSONEncoder):
 
 
 class Json_pyscopg2(extras.Json):
-    def dumps(self, obj):
+    def dumps(self, obj: Any):
         return json.dumps(obj, cls=JSONEncoder)
 
 
-def list_to_json(lista, seqToReplace=""):
-    arr = []
+def list_to_json(lista: List[Any], seqToReplace: str = ""):
+    arr: List[Any] = []
     for val in lista:
         arr.append(f"{adaptType(val, seqToReplace)}")
 
@@ -32,8 +30,8 @@ def list_to_json(lista, seqToReplace=""):
     return arr_text
 
 
-def dict_to_sqljson(obj, seqToReplace=""):
-    arr = []
+def dict_to_sqljson(obj: dict[Any, Any], seqToReplace: str = ""):
+    arr: List[Any] = []
     for key in obj:
         arr.append(f"'{key}',{adaptType(obj[key], seqToReplace)}")
 
@@ -41,7 +39,7 @@ def dict_to_sqljson(obj, seqToReplace=""):
     return obj_text
 
 
-def adaptType(val, seqToReplace=""):
+def adaptType(val: Any, seqToReplace: str = ""):
     if isinstance(val, (bool)):
         arr = f"{'true' if val else 'false'}"
     elif val == "next_id_trx":
@@ -66,8 +64,8 @@ def adaptType(val, seqToReplace=""):
     return arr
 
 
-def adaptTypes(values, seqToReplace=""):
-    arr = []
+def adaptTypes(values: Any, seqToReplace: str = ""):
+    arr: List[Any] = []
     for val in values:
         arr.append(adaptType(val, seqToReplace))
 
