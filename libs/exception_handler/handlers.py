@@ -1,6 +1,6 @@
 """ Custom error handlers for common errors """
 
-from typing import Dict
+from typing import Dict, Any, Union, Type
 
 from asyncpg.exceptions._base import PostgresError
 from fastapi import FastAPI, Request, status
@@ -9,7 +9,12 @@ from fastapi.responses import JSONResponse
 from psycopg.errors import Error as PGError
 from pydantic_core import ValidationError
 
-from schemas.responses_model.common import DetailErrorObj, ErrorResponse
+from schemas.responses_model.common import (
+    DetailErrorObj,
+    ErrorResponse,
+    ResponseBaseError,
+    ResponseBase
+)
 
 
 def format_error(exc: RequestValidationError) -> Dict[str, str]:
@@ -112,3 +117,13 @@ def init_handlers(application: FastAPI):
     application.add_exception_handler(
         RequestValidationError, request_validation_except_handler
     )
+
+
+responses_handlers: Dict[Union[int, str], Dict[str, Type]] = {
+    status.HTTP_200_OK: {"model": ResponseBase},
+    status.HTTP_400_BAD_REQUEST: {"model": ResponseBaseError},
+    # status.HTTP_401_UNAUTHORIZED: {"model": ResponseBaseError},
+    # status.HTTP_422_UNPROCESSABLE_ENTITY: {"model": ResponseBaseError},
+    status.HTTP_500_INTERNAL_SERVER_ERROR: {"model": ResponseBaseError},
+    # status.HTTP_502_BAD_GATEWAY: {"model": ResponseBaseError},
+}

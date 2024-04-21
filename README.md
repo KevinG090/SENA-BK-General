@@ -55,3 +55,8 @@ git pull <nombre-remoto> <rama-remota>
 git checkout Kevin
 git push origin Kevin
 ```
+
+### Desplegar en vercel:
+```bash
+vercel --prod
+```

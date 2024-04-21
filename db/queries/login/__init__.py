@@ -5,7 +5,6 @@ from psycopg2.extensions import register_adapter
 from psycopg2.extras import RealDictCursor, RealDictRow
 from psycopg.rows import dict_row
 
-from db.connection import pool_dispatcher
 from db.connection_optional import Connection
 from db.utils import Json_pyscopg2
 
