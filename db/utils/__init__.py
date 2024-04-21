@@ -1,13 +1,13 @@
-import math
 import json
+import math
 from contextlib import contextmanager
 from datetime import datetime, timedelta
-from typing import Dict, Any, Generator, Optional, List, Literal, Union
-
 from decimal import Decimal
+from typing import Any, Dict, Generator, List, Literal, Optional, Union
 
-from psycopg2 import sql, extras
+from psycopg2 import extras, sql
 from psycopg2.extensions import register_adapter
+
 
 class JSONEncoder(json.JSONEncoder):
     def default(self, o):

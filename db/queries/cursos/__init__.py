@@ -1,16 +1,18 @@
 import math
 from typing import Any, Dict, List, Optional, Union
 
-from psycopg.rows import dict_row
 from psycopg2.extensions import register_adapter
+from psycopg2.extras import RealDictCursor, RealDictRow
+from psycopg.rows import dict_row
 
 from db.connection import pool_dispatcher
-from psycopg2.extras import RealDictCursor, RealDictRow
 from db.connection_optional import Connection
 from db.utils import Json_pyscopg2
 
+
 class CursosQueries(Connection):
     """Clase para queries de los cursos"""
+
     def __init__(self) -> None:
         super().__init__()
         register_adapter(dict, Json_pyscopg2)
@@ -47,9 +49,9 @@ class CursosQueries(Connection):
 
         with self._open_connection(1) as conexion:
             with conexion.cursor(
-                cursor_factory = RealDictCursor,
-                name = "consulta_paginada_cursos",
-                scrollable = True
+                cursor_factory=RealDictCursor,
+                name="consulta_paginada_cursos",
+                scrollable=True,
             ) as cursor:
                 cursor.execute(query, data)
                 cursor.scroll(offset)

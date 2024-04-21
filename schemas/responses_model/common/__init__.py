@@ -1,13 +1,15 @@
 """"""
 
 from enum import Enum
+from typing import Any, Dict, List, Optional, Tuple, Type, Union
 
-from pydantic import BaseModel, Extra, Field, ConfigDict 
-from typing import Any, Dict, List, Optional, Tuple, Union, Type
+from pydantic import BaseModel, ConfigDict, Extra, Field
+
 from .templates import error_msg_templates as error_msg
 
 AnyDict = Dict[str, Any]
 ListedDict = List[AnyDict]
+
 
 class StatusService(BaseModel):
     """Model representing the service status."""
@@ -29,6 +31,7 @@ class EnumErrors(Enum):
     ERROR_INESPERADO = "Exception"
     ERROR_QUERY = "Psycopg2Error"
 
+
 class EnumMsg(Enum):
     """Modelo del msg de ``respuestas estandarizados``\n
 
@@ -49,14 +52,15 @@ class EnumMsg(Enum):
     CREACION = "Creacion"
     PETICION = "Peticion"
 
-class ModelConfig(BaseModel):
-    """ New Model config with translated errors """
 
-    model_config = ConfigDict(extra='allow')
+class ModelConfig(BaseModel):
+    """New Model config with translated errors"""
+
+    model_config = ConfigDict(extra="allow")
 
 
 class DetailErrorObj(BaseModel):
-    """ Error Object Model """
+    """Error Object Model"""
 
     complete_info: Any = ""
     user_msg: str = ""
@@ -70,8 +74,8 @@ class ResponseBase(BaseModel):
     status: bool
     obj: Any = {}
 
-class CreateResponse(BaseException):
 
+class CreateResponse(BaseException):
     def __init__(
         self,
         msg_res: EnumMsg,
@@ -79,27 +83,30 @@ class CreateResponse(BaseException):
         status_res: bool,
         obj_res: AnyDict,
     ) -> None:
-
         res = ResponseBase(
-            msg = f"{msg_res.value} {'exitosa' if status_res else 'fallida'}",
-            codigo = str(codigo_res),
-            status = status_res,
-            obj = obj_res
+            msg=f"{msg_res.value} {'exitosa' if status_res else 'fallida'}",
+            codigo=str(codigo_res),
+            status=status_res,
+            obj=obj_res,
         )
 
         return res
 
+
 class ResponseBaseError(ResponseBase):
     """ """
+
     class ErrorObj(BaseModel):
         """ """
+
         error: List[DetailErrorObj]
 
     obj: ErrorObj
     status: bool = False
 
+
 class ErrorResponse(Exception):
-    """ Custom exception """
+    """Custom exception"""
 
     _error_list = []
     error_msg: str
@@ -111,7 +118,7 @@ class ErrorResponse(Exception):
         error_msg: str,
         error_status: int,
         error_obj: DetailErrorObj,
-        codigo_error: str = "0"
+        codigo_error: str = "0",
     ) -> None:
         super().__init__(error_obj)
         self._error_list = [error_obj]
@@ -122,18 +129,14 @@ class ErrorResponse(Exception):
 
     @property
     def args(self):
-        """ Override property for use the `ResponseBase` """
+        """Override property for use the `ResponseBase`"""
         type_code = f"[{self.codigo_error}]" if self.codigo_error != "0" else ""
 
         res = ResponseBase(
             status=False,
             codigo=self.codigo_error,
-            msg= f"Error respuesta: ({self.error_msg} {type_code})" ,
-            obj={
-                "error": [
-                    _error for _error in self._error_list
-                ]
-            }
+            msg=f"Error respuesta: ({self.error_msg} {type_code})",
+            obj={"error": [_error for _error in self._error_list]},
         )
 
         args: Tuple[ResponseBase, int] = (res, self.error_status)
@@ -142,6 +145,5 @@ class ErrorResponse(Exception):
 
     @property
     def error_list(self):
-        """ Dict with all errors acumulated per request """
+        """Dict with all errors acumulated per request"""
         return self._error_list
-

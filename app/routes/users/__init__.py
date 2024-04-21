@@ -1,10 +1,10 @@
 """"""
 
 from fastapi import APIRouter
-from db.queries.users import UsersQueries
 from psycopg.errors import Error as PGError
 
-from schemas.responses_model.common import EnumErrors, ResponseBase, EnumMsg
+from db.queries.users import UsersQueries
+from schemas.responses_model.common import EnumErrors, EnumMsg, ResponseBase
 
 router = APIRouter()
 

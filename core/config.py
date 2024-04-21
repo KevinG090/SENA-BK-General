@@ -8,7 +8,6 @@ from pydantic_core import MultiHostHost
 from pydantic_settings import BaseSettings
 
 from libs.exception_handler import init_handlers
-
 from schemas.tags import description, extra_info, tags_metadata
 
 
@@ -16,7 +15,7 @@ class Settings(BaseSettings):
     """Configuracion y captura de variables de entorno"""
 
     PROJECT_NAME: str
-    BACKEND_CORS_ORIGINS: List[Union[AnyHttpUrl,str]] = ["*"]
+    BACKEND_CORS_ORIGINS: List[Union[AnyHttpUrl, str]] = ["*"]
 
     @field_validator("BACKEND_CORS_ORIGINS", mode="before")
     def assemble_cors_origins(cls, v: Union[str, List[str]]) -> Union[List[str], str]:

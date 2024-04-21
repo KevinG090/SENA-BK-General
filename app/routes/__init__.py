@@ -2,7 +2,7 @@
 
 from fastapi import APIRouter
 
-from app.routes import cursos, materias, users,login
+from app.routes import cursos, login, materias, users
 
 router = APIRouter()
 

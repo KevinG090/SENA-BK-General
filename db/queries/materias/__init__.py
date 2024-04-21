@@ -1,19 +1,21 @@
-import math
 import json
+import math
 from contextlib import contextmanager
 from datetime import datetime, timedelta
-from typing import Dict, Any, Generator, Optional, List, Literal, Union
+from typing import Any, Dict, Generator, List, Literal, Optional, Union
 
-from psycopg2 import sql, extras
+from psycopg2 import extras, sql
 from psycopg2.extensions import register_adapter
-from psycopg.rows import dict_row
 from psycopg2.extras import RealDictCursor, RealDictRow
+from psycopg.rows import dict_row
 
 from db.connection_optional import Connection
 from db.utils import Json_pyscopg2
 
+
 class MateriasQueries(Connection):
     """Clase para queries de los materias"""
+
     def __init__(self) -> None:
         super().__init__()
         register_adapter(dict, Json_pyscopg2)

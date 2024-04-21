@@ -1,11 +1,11 @@
 import math
 from typing import Any, Dict, List, Optional, Union
 
-from psycopg.rows import dict_row
 from psycopg2.extensions import register_adapter
+from psycopg2.extras import RealDictCursor, RealDictRow
+from psycopg.rows import dict_row
 
 from db.connection import pool_dispatcher
-from psycopg2.extras import RealDictCursor, RealDictRow
 from db.connection_optional import Connection
 from db.utils import Json_pyscopg2
 
@@ -23,7 +23,6 @@ class LoginQueries(Connection):
         email: str,
         passworld: str,
     ) -> Union[RealDictRow, None]:
-
         data = {
             "correo": email,
             "passworld": passworld,
@@ -33,8 +32,8 @@ class LoginQueries(Connection):
             SELECT *
             FROM public.tbl_usuarios AS users
             WHERE
-                UPPER(users.correo) LIKE UPPER('%%'||%(correo)s||'%%') 
-                AND UPPER(users.contraseña) LIKE UPPER('%%'||%(passworld)s||'%%') 
+                UPPER(users.correo) LIKE UPPER('%%'||%(correo)s||'%%')
+                AND UPPER(users.contraseña) LIKE UPPER('%%'||%(passworld)s||'%%')
 
         """
 

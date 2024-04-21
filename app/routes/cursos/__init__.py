@@ -4,7 +4,12 @@ from fastapi import APIRouter
 from psycopg.errors import Error as PGError
 
 from db.queries.cursos import CursosQueries
-from schemas.responses_model.common import EnumErrors, ResponseBase, EnumMsg,CreateResponse
+from schemas.responses_model.common import (
+    CreateResponse,
+    EnumErrors,
+    EnumMsg,
+    ResponseBase,
+)
 
 router = APIRouter()
 
@@ -17,10 +22,10 @@ async def get_list_courses():
         results = await CursosQueries().lista_paginada_cursos()
 
         res = ResponseBase(
-            msg = f"{EnumMsg.CONSULTA_PAGINADA.value} exitosa",
-            codigo = str(200),
-            status = True,
-            obj = results
+            msg=f"{EnumMsg.CONSULTA_PAGINADA.value} exitosa",
+            codigo=str(200),
+            status=True,
+            obj=results,
         )
     except PGError as e:
         raise Exception(f"{EnumErrors.ERROR_QUERY.value}: {e}")

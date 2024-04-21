@@ -1,13 +1,13 @@
-import math
 import json
+import math
 from contextlib import contextmanager
 from datetime import datetime, timedelta
-from typing import Dict, Any, Generator, Optional, List, Literal, Union
+from typing import Any, Dict, Generator, List, Literal, Optional, Union
 
-from psycopg2 import sql, extras
+from psycopg2 import extras, sql
 from psycopg2.extensions import register_adapter
-from psycopg.rows import dict_row
 from psycopg2.extras import RealDictCursor, RealDictRow
+from psycopg.rows import dict_row
 
 from db.connection_optional import Connection
 from db.utils import Json_pyscopg2
@@ -24,11 +24,12 @@ class UsersQueries(Connection):
         offset: int = 0,
         pk_id_usuario: Optional[str] = None,
         nombre_usuario: Optional[str] = None,
-    ) -> Dict[str, Any] :
-        
+    ) -> Dict[str, Any]:
         data = {
             "pk_id_usuario": pk_id_usuario,
-            "nombre_usuario": nombre_usuario.upper() if not nombre_usuario is None else None,
+            "nombre_usuario": (
+                nombre_usuario.upper() if not nombre_usuario is None else None
+            ),
         }
 
         query = """
