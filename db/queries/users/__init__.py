@@ -4,111 +4,61 @@ from contextlib import contextmanager
 from datetime import datetime, timedelta
 from typing import Dict, Any, Generator, Optional, List, Literal, Union
 
-
-from decimal import Decimal
-
-
 from psycopg2 import sql, extras
 from psycopg2.extensions import register_adapter
+from psycopg.rows import dict_row
+from psycopg2.extras import RealDictCursor, RealDictRow
 
 from db.connection_optional import Connection
-
-class JSONEncoder(json.JSONEncoder):
-    def default(self, o):
-        if isinstance(o, Decimal):
-            return float(o)
-        elif isinstance(o, datetime):
-            return o.isoformat()
-        return json.JSONEncoder.default(self, o)
+from db.utils import Json_pyscopg2
 
 
-class Json_pyscopg2(extras.Json):
-    def dumps(self, obj):
-        return json.dumps(obj, cls=JSONEncoder)
-
-
-def list_to_json(lista, seqToReplace=""):
-    arr = []
-    for val in lista:
-        arr.append(f"{adaptType(val, seqToReplace)}")
-
-    arr_text = f'json_build_array({",".join(arr)})'
-    return arr_text
-
-
-def dict_to_sqljson(obj, seqToReplace=""):
-    arr = []
-    for key in obj:
-        arr.append(f"'{key}',{adaptType(obj[key], seqToReplace)}")
-
-    obj_text = f'json_build_object({",".join(arr)})'
-    return obj_text
-
-
-def adaptType(val, seqToReplace=""):
-    if isinstance(val, (bool)):
-        arr = f"{'true' if val else 'false'}"
-    elif val == "next_id_trx":
-        arr = f"NEXTVAL('{seqToReplace}')"
-    elif isinstance(val, (int, float)) or val == "new_id_trx":
-        arr = f"{val}"
-    elif isinstance(val, (dict)):
-        arr = f"{dict_to_sqljson(val, seqToReplace)}"
-    elif isinstance(val, (list)):
-        arr = f"{list_to_json(val, seqToReplace)}"
-    elif isinstance(val, (str)) and val.find("new_id_trx") != -1:
-        arrOcc = val.replace("'", '"').replace("new_id_trx", "|new_id_trx|").split("|")
-        for it in range(len(arrOcc)):
-            if arrOcc[it] != "new_id_trx":
-                arrOcc[it] = f"'{arrOcc[it]}'"
-        strOcc = ",".join(arrOcc)
-        arr = f"CONCAT({strOcc})"
-    else:
-        newval = str(val).replace("'", '"')
-        arr = f"'{newval}'"
-
-    return arr
-
-
-def adaptTypes(values, seqToReplace=""):
-    arr = []
-    for val in values:
-        arr.append(adaptType(val, seqToReplace))
-
-    arr_text = f"{','.join(arr)}"
-    return arr_text
-
-
-class Query(Connection):
+class UsersQueries(Connection):
     def __init__(self) -> None:
         super().__init__()
         register_adapter(dict, Json_pyscopg2)
-   
-    def consultar_cursos(self):
 
-        query = f"""
+    async def consultar_paginada_usuarios(
+        self,
+        limit: int = 10,
+        offset: int = 0,
+        pk_id_usuario: Optional[str] = None,
+        nombre_usuario: Optional[str] = None,
+    ) -> Dict[str, Any] :
+        
+        data = {
+            "pk_id_usuario": pk_id_usuario,
+            "nombre_usuario": nombre_usuario.upper() if not nombre_usuario is None else None,
+        }
+
+        query = """
             SELECT
-                pk_id_curso,
-                nombre_curso
-            FROM public.tbl_cursos
+                pk_id_usuario,
+                nombre_usuario
+            FROM public.tbl_usuarios
+            WHERE
+                pk_id_usuario::TEXT LIKE COALESCE(
+                    '%%'||%(pk_id_usuario)s||'%%',
+                    pk_id_usuario::TEXT
+                )
+                AND UPPER(nombre_usuario) LIKE COALESCE(
+                    '%%'||%(nombre_usuario)s||'%%',
+                    UPPER(nombre_usuario)
+                )
+            ORDER BY pk_id_usuario DESC
         """
 
-        conexion = self.connect()
-        try:
-            cursor = conexion.cursor()
+        with self._open_connection(1) as conexion:
+            with conexion.cursor(
+                cursor_factory=RealDictCursor,
+                name="consulta_paginada_usuarios",
+                scrollable=True,
+            ) as cursor:
+                cursor.execute(query, data)
+                cursor.scroll(offset)
 
-            cursor.execute(query)
-            conexion.commit()
+                res: List[RealDictRow] = cursor.fetchmany(limit)
 
-            cols = [obj[0] for obj in cursor.description]
-            Lista = [
-                {cols[index]: val for index, val in enumerate(obj)}
-                for obj in cursor.fetchall()
-            ]
+                results = {"next_exist": bool(cursor.fetchone()), "results": res}
 
-
-            # self.closeConnection(conexion)
-            return Lista
-        except Exception as e:
-            self.closeConnection(conexion)
-            raise e
+                return results

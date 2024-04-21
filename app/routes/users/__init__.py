@@ -1,26 +1,40 @@
 """"""
 
 from fastapi import APIRouter
-from db.queries.users import Query 
+from db.queries.users import UsersQueries
+from psycopg.errors import Error as PGError
+
+from schemas.responses_model.common import EnumErrors, ResponseBase, EnumMsg
 
 router = APIRouter()
 
 
 @router.get("/listar-usuarios")
-def get_list_users():
+async def get_list_users():
     """"""
-    query_helper = Query()
+    try:
+        results = await UsersQueries().consultar_paginada_usuarios()
+        res = ResponseBase(
+            msg=f"{EnumMsg.CONSULTA_PAGINADA.value} exitosa",
+            codigo=str(200),
+            status=True,
+            obj=results,
+        )
+    except PGError as e:
+        raise Exception(f"{EnumErrors.ERROR_QUERY.value}: {e}")
+    except Exception as e:
+        raise Exception(f"{EnumErrors.ERROR_INESPERADO.value}: {e}")
 
-    return query_helper.consultar_cursos()
+    return res
 
 
 @router.post("/crear-usuarios")
-def create_users():
+async def create_users():
     """"""
     return [{"usuarios": ""}]
 
 
 @router.put("/modificar-usuarios")
-def edit_users():
+async def edit_users():
     """"""
     return [{"usuarios": ""}]

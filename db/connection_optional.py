@@ -47,7 +47,6 @@ def getDBInfo():
             database=safe_list_get(databases, index, ""),
         )
         available_dbs.append(temp_dict)
-    print(available_dbs)
 
     return available_dbs
 

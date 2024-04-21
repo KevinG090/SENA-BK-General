@@ -14,6 +14,10 @@ tags_metadata = [
         "description": "",
     },
     {
+        "name": "Login",
+        "description": "",
+    },
+    {
         "name": "Cursos",
         "description": "",
     },

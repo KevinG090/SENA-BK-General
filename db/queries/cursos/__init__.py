@@ -1,16 +1,23 @@
 import math
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Union
 
 from psycopg.rows import dict_row
+from psycopg2.extensions import register_adapter
 
 from db.connection import pool_dispatcher
+from psycopg2.extras import RealDictCursor, RealDictRow
+from db.connection_optional import Connection
+from db.utils import Json_pyscopg2
 
-
-class CursosQueries:
+class CursosQueries(Connection):
     """Clase para queries de los cursos"""
+    def __init__(self) -> None:
+        super().__init__()
+        register_adapter(dict, Json_pyscopg2)
 
-    @staticmethod
+    # @staticmethod
     async def lista_paginada_cursos(
+        self,
         limit: int = 10,
         offset: int = 0,
         pk_id_curso: Optional[str] = None,
@@ -37,34 +44,18 @@ class CursosQueries:
                 )
             ORDER BY pk_id_curso DESC
         """
-        query_pag = f"""
-            SELECT COUNT(*)
-            FROM ({query}) AS subconsulta;
-        """
 
-        async with pool_dispatcher.async_pool.read.connection() as conn:
-            async with conn.cursor(
-                name="search_cursos_paginados", scrollable=True
+        with self._open_connection(1) as conexion:
+            with conexion.cursor(
+                cursor_factory = RealDictCursor,
+                name = "consulta_paginada_cursos",
+                scrollable = True
             ) as cursor:
-                cursor.row_factory = dict_row
-                await cursor.execute(query, data)
-                await cursor.scroll(offset)
+                cursor.execute(query, data)
+                cursor.scroll(offset)
 
-                res: List[Dict[str, Any]] = await cursor.fetchmany(limit)
+                res: List[RealDictRow] = cursor.fetchmany(limit)
 
-                results = {"next_exist": bool(await cursor.fetchone()), "results": res}
-
-                await cursor.execute(query_pag, data)
-
-                res_count: Any | dict[str, Any] = await cursor.fetchone()
-                max_elems = res_count.get("count", len(res))
-                max_pages = math.ceil(max_elems / limit)
-
-                results.update(
-                    {
-                        "max_elems": max_elems,
-                        "max_pages": max_pages,
-                    }
-                )
+                results = {"next_exist": bool(cursor.fetchone()), "results": res}
 
                 return results

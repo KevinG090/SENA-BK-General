@@ -2,9 +2,16 @@
 
 from fastapi import APIRouter
 
-from app.routes import cursos, materias, users
+from app.routes import cursos, materias, users,login
 
 router = APIRouter()
+
+router.include_router(
+    login.router,
+    prefix="/login",
+    tags=["Login"],
+    # responses=responses_handlers
+)
 
 router.include_router(
     cursos.router,
