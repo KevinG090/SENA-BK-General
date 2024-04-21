@@ -1,9 +1,9 @@
 """"""
 
+from typing import Optional
+
 from fastapi import APIRouter
 from psycopg.errors import Error as PGError
-
-from typing import Optional
 
 from db.queries.cursos import CursosQueries, EventosQueries
 from schemas.responses_model.common import (
@@ -28,10 +28,7 @@ async def get_list_courses(
     try:
         offset = (page - 1) * limit
         results = await CursosQueries().lista_paginada_cursos(
-            limit,
-            offset,
-            pk_id_curso,
-            nombre_curso
+            limit, offset, pk_id_curso, nombre_curso
         )
 
         res = ResponseBase(
@@ -47,6 +44,7 @@ async def get_list_courses(
 
     return res
 
+
 @router.get("/listar-eventos")
 async def get_list_courses(
     limit: int = 10,
@@ -59,10 +57,7 @@ async def get_list_courses(
     try:
         offset = (page - 1) * limit
         results = await EventosQueries().lista_paginada_eventos(
-            limit,
-            offset,
-            fk_id_curso,
-            nombre_evento
+            limit, offset, fk_id_curso, nombre_evento
         )
 
         res = ResponseBase(

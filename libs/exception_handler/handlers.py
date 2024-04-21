@@ -1,6 +1,6 @@
 """ Custom error handlers for common errors """
 
-from typing import Dict, Any, Union, Type
+from typing import Dict, Type, Union
 
 from asyncpg.exceptions._base import PostgresError
 from fastapi import FastAPI, Request, status
@@ -12,8 +12,8 @@ from pydantic_core import ValidationError
 from schemas.responses_model.common import (
     DetailErrorObj,
     ErrorResponse,
+    ResponseBase,
     ResponseBaseError,
-    ResponseBase
 )
 
 

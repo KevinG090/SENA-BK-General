@@ -1,11 +1,12 @@
 """"""
 
+from typing import Optional
+
 from fastapi import APIRouter
 from psycopg.errors import Error as PGError
 
 from db.queries.users import UsersQueries
 from schemas.responses_model.common import EnumErrors, EnumMsg, ResponseBase
-from typing import Optional
 
 router = APIRouter()
 

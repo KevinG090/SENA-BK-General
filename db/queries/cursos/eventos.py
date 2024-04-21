@@ -1,12 +1,8 @@
-import math
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional
 
-from psycopg2.extensions import register_adapter
 from psycopg2.extras import RealDictCursor, RealDictRow
-from psycopg.rows import dict_row
 
 from db.connection_optional import Connection
-from db.utils import Json_pyscopg2
 
 
 class EventosQueries(Connection):
@@ -19,10 +15,11 @@ class EventosQueries(Connection):
         fk_id_curso: Optional[str] = None,
         nombre_evento: Optional[str] = None,
     ) -> Dict[str, Any]:
-    
         data = {
             "fk_id_curso": fk_id_curso,
-            "nombre_evento": nombre_evento.upper() if not nombre_evento is None else None,
+            "nombre_evento": (
+                nombre_evento.upper() if not nombre_evento is None else None
+            ),
         }
 
         query = """

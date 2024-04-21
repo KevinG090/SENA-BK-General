@@ -2,16 +2,12 @@ from fastapi import APIRouter
 
 from app import routes
 from core.config import app
-from schemas.responses_model.common import StatusService
 from libs.exception_handler import responses_handlers
+from schemas.responses_model.common import StatusService
 
 router = APIRouter()
 
-router.include_router(
-    routes.router,
-    prefix="/api",
-    responses=responses_handlers
-)
+router.include_router(routes.router, prefix="/api", responses=responses_handlers)
 
 app.include_router(router)
 
