@@ -11,6 +11,10 @@ from schemas.responses_model.common import (
     EnumMsg,
     ResponseBase,
 )
+from schemas.responses_model.cursos import (
+    InputCreacionEvento,
+    InputCreacionCurso
+)
 
 router = APIRouter()
 
@@ -45,7 +49,7 @@ async def get_list_courses(
 
 
 @router.get("/listar-eventos")
-async def get_list_eventos(
+async def get_list_events(
     limit: int = 10,
     page: int = 1,
     fk_id_curso: Optional[str] = None,
@@ -73,11 +77,51 @@ async def get_list_eventos(
     return res
 
 
-@router.post("/crear-cursos")
-async def create_course():
+@router.post("/crear-eventos")
+async def create_events(evento: InputCreacionEvento):
     """"""
-    return [{"cursos": ""}]
+    try:
+        results = await EventosQueries().crear_eventos(evento)
 
+        res = ResponseBase(
+            msg=f"{EnumMsg.CREACION.value} exitosa",
+            codigo=str(200),
+            status=True,
+            obj=results,
+        )
+    except PGError as e:
+        raise Exception(f"{EnumErrors.ERROR_QUERY.value}: {e}")
+    except Exception as e:
+        raise Exception(f"{EnumErrors.ERROR_INESPERADO.value}: {e}")
+
+    return res
+
+
+
+@router.put("/modificar-eventos")
+async def edit_events():
+    """"""
+    return [{"eventos": ""}]
+
+
+@router.post("/crear-cursos")
+async def create_cursos(evento: InputCreacionCurso):
+    """"""
+    try:
+        results = await CursosQueries().crear_cursos(evento)
+
+        res = ResponseBase(
+            msg=f"{EnumMsg.CREACION.value} exitosa",
+            codigo=str(200),
+            status=True,
+            obj=results,
+        )
+    except PGError as e:
+        raise Exception(f"{EnumErrors.ERROR_QUERY.value}: {e}")
+    except Exception as e:
+        raise Exception(f"{EnumErrors.ERROR_INESPERADO.value}: {e}")
+
+    return res
 
 @router.put("/modificar-cursos")
 async def edit_course():

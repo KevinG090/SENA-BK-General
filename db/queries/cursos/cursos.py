@@ -1,10 +1,14 @@
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Union
 
 from psycopg2.extensions import register_adapter
 from psycopg2.extras import RealDictCursor, RealDictRow
 
 from db.connection_optional import Connection
 from db.utils import Json_pyscopg2
+
+from schemas.responses_model.cursos import (
+    InputCreacionCurso,
+)
 
 
 class CursosQueries(Connection):
@@ -56,5 +60,28 @@ class CursosQueries(Connection):
                 res: List[RealDictRow] = cursor.fetchmany(limit)
 
                 results = {"next_exist": bool(cursor.fetchone()), "results": res}
+
+                return results
+            
+    async def crear_cursos(self, data: InputCreacionCurso) -> Dict[str, Any]:
+
+        query = """INSERT INTO public.tbl_cursos(
+                nombre_curso,
+            )
+            VALUES (
+                %(nombre_curso)s,
+            )
+            RETURNING pk_id_curso;
+        """
+        with self._open_connection(1) as conexion:
+            with conexion.cursor(
+                cursor_factory=RealDictCursor
+            ) as cursor:
+
+                cursor.execute(query, data.dict())
+
+                res: Union[RealDictRow, None] = cursor.fetchone()
+
+                results = {"results": res}
 
                 return results
