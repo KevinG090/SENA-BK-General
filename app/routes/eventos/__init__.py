@@ -11,27 +11,25 @@ from schemas.responses_model.common import (
     EnumMsg,
     ResponseBase,
 )
-
-from schemas.responses_model.cursos import (
-    InputCreacionCurso
+from schemas.responses_model.eventos import (
+    InputCreacionEvento,
 )
 
 router = APIRouter()
 
-
-@router.get("/listar-cursos")
-async def get_list_courses(
+@router.get("/listar-eventos")
+async def get_list_events(
     limit: int = 10,
     page: int = 1,
-    pk_id_curso: Optional[str] = None,
-    nombre_curso: Optional[str] = None,
+    fk_id_curso: Optional[str] = None,
+    nombre_evento: Optional[str] = None,
 ):
     """Metodo para listar los cursos de manera paginada"""
 
     try:
         offset = (page - 1) * limit
-        results = await CursosQueries().lista_paginada_cursos(
-            limit, offset, pk_id_curso, nombre_curso
+        results = await EventosQueries().lista_paginada_eventos(
+            limit, offset, fk_id_curso, nombre_evento
         )
 
         res = ResponseBase(
@@ -48,12 +46,11 @@ async def get_list_courses(
     return res
 
 
-
-@router.post("/crear-cursos")
-async def create_cursos(evento: InputCreacionCurso):
+@router.post("/crear-eventos")
+async def create_events(evento: InputCreacionEvento):
     """"""
     try:
-        results = await CursosQueries().crear_cursos(evento)
+        results = await EventosQueries().crear_eventos(evento)
 
         res = ResponseBase(
             msg=f"{EnumMsg.CREACION.value} exitosa",
@@ -68,7 +65,9 @@ async def create_cursos(evento: InputCreacionCurso):
 
     return res
 
-@router.put("/modificar-cursos")
-async def edit_course():
+
+
+@router.put("/modificar-eventos")
+async def edit_events():
     """"""
-    return [{"cursos": ""}]
+    return [{"eventos": ""}]

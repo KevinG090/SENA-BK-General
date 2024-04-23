@@ -6,7 +6,7 @@ from psycopg2.extras import RealDictCursor, RealDictRow
 
 from db.connection_optional import Connection
 
-from schemas.responses_model.cursos import (
+from schemas.responses_model.eventos import (
     InputCreacionEvento,
 )
 
