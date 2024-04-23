@@ -2,6 +2,7 @@
 
 from enum import Enum
 
+
 class TipoUsuarios(Enum):
     """Modelo de ``Tipos de usuarios``\n
 

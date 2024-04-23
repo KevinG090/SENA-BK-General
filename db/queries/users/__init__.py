@@ -7,9 +7,7 @@ from psycopg2.extras import RealDictCursor, RealDictRow
 
 from db.connection_optional import Connection
 from db.utils import Json_pyscopg2
-from schemas.responses_model.users import (
-    InputCreacionUsers
-)
+from schemas.responses_model.users import InputCreacionUsers
 
 
 class UsersQueries(Connection):
@@ -63,9 +61,7 @@ class UsersQueries(Connection):
 
                 return results
 
-
     async def crear_usuarios(self, data: InputCreacionUsers) -> Dict[str, Any]:
-
         query = """INSERT INTO public.tbl_usuarios(
                 nombre_usuario,
                 celular,
@@ -86,7 +82,6 @@ class UsersQueries(Connection):
         """
         with self._open_connection(1) as conexion:
             with conexion.cursor(cursor_factory=RealDictCursor) as cursor:
-
                 cursor.execute(query, data.dict())
 
                 res: Union[RealDictRow, None] = cursor.fetchone()

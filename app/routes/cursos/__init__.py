@@ -6,15 +6,8 @@ from fastapi import APIRouter
 from psycopg.errors import Error as PGError
 
 from db.queries.cursos import CursosQueries
-from schemas.responses_model.common import (
-    EnumErrors,
-    EnumMsg,
-    ResponseBase,
-)
-
-from schemas.responses_model.cursos import (
-    InputCreacionCurso
-)
+from schemas.responses_model.common import EnumErrors, EnumMsg, ResponseBase
+from schemas.responses_model.cursos import InputCreacionCurso
 
 router = APIRouter()
 
@@ -48,7 +41,6 @@ async def get_list_courses(
     return res
 
 
-
 @router.post("/crear-cursos")
 async def create_cursos(evento: InputCreacionCurso):
     """"""
@@ -67,6 +59,7 @@ async def create_cursos(evento: InputCreacionCurso):
         raise Exception(f"{EnumErrors.ERROR_INESPERADO.value}: {e}")
 
     return res
+
 
 @router.put("/modificar-cursos")
 async def edit_course():

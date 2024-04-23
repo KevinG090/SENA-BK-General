@@ -7,9 +7,7 @@ from psycopg.errors import Error as PGError
 
 from db.queries.materias import MateriasQueries
 from schemas.responses_model.common import EnumErrors, EnumMsg, ResponseBase
-from schemas.responses_model.materias import (
-    InputCreacionMaterias,
-)
+from schemas.responses_model.materias import InputCreacionMaterias
 
 router = APIRouter()
 

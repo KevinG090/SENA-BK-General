@@ -1,5 +1,4 @@
-
-def validate_type_number(value:str):
+def validate_type_number(value: str):
     try:
         return int(str(value))
     except ValueError as exc:

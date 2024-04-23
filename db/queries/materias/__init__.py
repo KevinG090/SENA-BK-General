@@ -7,10 +7,7 @@ from psycopg2.extras import RealDictCursor, RealDictRow
 
 from db.connection_optional import Connection
 from db.utils import Json_pyscopg2
-
-from schemas.responses_model.materias import (
-    InputCreacionMaterias,
-)
+from schemas.responses_model.materias import InputCreacionMaterias
 
 
 class MateriasQueries(Connection):
@@ -68,7 +65,6 @@ class MateriasQueries(Connection):
                 return results
 
     async def crear_materias(self, data: InputCreacionMaterias) -> Dict[str, Any]:
-
         query = """INSERT INTO public.tbl_materias(
                 nombre_materia,
                 descripcion
@@ -81,7 +77,6 @@ class MateriasQueries(Connection):
         """
         with self._open_connection(1) as conexion:
             with conexion.cursor(cursor_factory=RealDictCursor) as cursor:
-
                 cursor.execute(query, data.dict())
 
                 res: Union[RealDictRow, None] = cursor.fetchone()

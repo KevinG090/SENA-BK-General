@@ -83,7 +83,7 @@ class CreateResponse(BaseException):
         codigo_res: int,
         status_res: bool,
         obj_res: AnyDict,
-    ) :
+    ):
         res = ResponseBase(
             msg=f"{msg_res.value} {'exitosa' if status_res else 'fallida'}",
             codigo=str(codigo_res),

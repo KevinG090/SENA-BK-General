@@ -1,9 +1,6 @@
 """ Modelos de eventos """
 
-from schemas.responses_model.common import ModelConfig
-from pydantic import BaseModel, Field, field_validator
-from typing import Optional, Any
-from schemas.utils import validate_type_number
+from pydantic import BaseModel, Field
 
 
 class InputCreacionCurso(BaseModel):

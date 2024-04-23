@@ -7,9 +7,8 @@ from psycopg.errors import Error as PGError
 
 from db.queries.users import UsersQueries
 from schemas.responses_model.common import EnumErrors, EnumMsg, ResponseBase
-from schemas.responses_model.users import (
-    InputCreacionUsers
-)
+from schemas.responses_model.users import InputCreacionUsers
+
 router = APIRouter()
 
 
@@ -41,7 +40,6 @@ async def get_list_users(
         raise Exception(f"{EnumErrors.ERROR_INESPERADO.value}: {e}")
 
     return res
-
 
 
 @router.post("/crear-usuarios")

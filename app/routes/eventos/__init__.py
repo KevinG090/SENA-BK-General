@@ -6,16 +6,11 @@ from fastapi import APIRouter
 from psycopg.errors import Error as PGError
 
 from db.queries.eventos import EventosQueries
-from schemas.responses_model.common import (
-    EnumErrors,
-    EnumMsg,
-    ResponseBase,
-)
-from schemas.responses_model.eventos import (
-    InputCreacionEvento,
-)
+from schemas.responses_model.common import EnumErrors, EnumMsg, ResponseBase
+from schemas.responses_model.eventos import InputCreacionEvento
 
 router = APIRouter()
+
 
 @router.get("/listar-eventos")
 async def get_list_events(
@@ -64,7 +59,6 @@ async def create_events(evento: InputCreacionEvento):
         raise Exception(f"{EnumErrors.ERROR_INESPERADO.value}: {e}")
 
     return res
-
 
 
 @router.put("/modificar-eventos")
