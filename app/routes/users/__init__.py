@@ -7,7 +7,9 @@ from psycopg.errors import Error as PGError
 
 from db.queries.users import UsersQueries
 from schemas.responses_model.common import EnumErrors, EnumMsg, ResponseBase
-
+from schemas.responses_model.users import (
+    InputCreacionUsers
+)
 router = APIRouter()
 
 
@@ -41,10 +43,25 @@ async def get_list_users(
     return res
 
 
+
 @router.post("/crear-usuarios")
-async def create_users():
+async def create_users(evento: InputCreacionUsers):
     """"""
-    return [{"usuarios": ""}]
+    try:
+        results = await UsersQueries().crear_usuarios(evento)
+
+        res = ResponseBase(
+            msg=f"{EnumMsg.CREACION.value} exitosa",
+            codigo=str(200),
+            status=True,
+            obj=results,
+        )
+    except PGError as e:
+        raise Exception(f"{EnumErrors.ERROR_QUERY.value}: {e}")
+    except Exception as e:
+        raise Exception(f"{EnumErrors.ERROR_INESPERADO.value}: {e}")
+
+    return res
 
 
 @router.put("/modificar-usuarios")

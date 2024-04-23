@@ -1,12 +1,16 @@
 """"""
 
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Union
 
 from psycopg2.extensions import register_adapter
 from psycopg2.extras import RealDictCursor, RealDictRow
 
 from db.connection_optional import Connection
 from db.utils import Json_pyscopg2
+
+from schemas.responses_model.materias import (
+    InputCreacionMaterias,
+)
 
 
 class MateriasQueries(Connection):
@@ -60,5 +64,28 @@ class MateriasQueries(Connection):
                 res: List[RealDictRow] = cursor.fetchmany(limit)
 
                 results = {"next_exist": bool(cursor.fetchone()), "results": res}
+
+                return results
+
+    async def crear_materias(self, data: InputCreacionMaterias) -> Dict[str, Any]:
+
+        query = """INSERT INTO public.tbl_materias(
+                nombre_materia,
+                descripcion
+            )
+            VALUES (
+                %(nombre_materia)s,
+                %(descripcion)s
+            )
+            RETURNING pk_id_materia;
+        """
+        with self._open_connection(1) as conexion:
+            with conexion.cursor(cursor_factory=RealDictCursor) as cursor:
+
+                cursor.execute(query, data.dict())
+
+                res: Union[RealDictRow, None] = cursor.fetchone()
+
+                results = {"results": res}
 
                 return results

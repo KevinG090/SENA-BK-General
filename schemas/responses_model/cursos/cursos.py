@@ -6,7 +6,7 @@ from typing import Optional, Any
 from schemas.utils import validate_type_number
 
 
-class InputCreacionCurso(ModelConfig):
+class InputCreacionCurso(BaseModel):
     """"""
 
     nombre_curso: str = Field(..., examples=["Nombre curso"], max_length=20)

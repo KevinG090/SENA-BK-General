@@ -6,6 +6,7 @@ from typing import Any, Dict, List, Optional, Tuple, Type, Union
 from pydantic import BaseModel, ConfigDict, Extra, Field
 
 from .templates import error_msg_templates as error_msg
+from .users import TipoUsuarios
 
 AnyDict = Dict[str, Any]
 ListedDict = List[AnyDict]

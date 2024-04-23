@@ -5,7 +5,7 @@ from typing import Optional
 from fastapi import APIRouter
 from psycopg.errors import Error as PGError
 
-from db.queries.cursos import CursosQueries, EventosQueries
+from db.queries.cursos import CursosQueries
 from schemas.responses_model.common import (
     EnumErrors,
     EnumMsg,

@@ -7,6 +7,9 @@ from psycopg.errors import Error as PGError
 
 from db.queries.materias import MateriasQueries
 from schemas.responses_model.common import EnumErrors, EnumMsg, ResponseBase
+from schemas.responses_model.materias import (
+    InputCreacionMaterias,
+)
 
 router = APIRouter()
 
@@ -42,9 +45,23 @@ async def get_list_topics(
 
 
 @router.post("/crear-materias")
-async def create_topics():
+async def create_topics(evento: InputCreacionMaterias):
     """"""
-    return [{"materias": ""}]
+    try:
+        results = await MateriasQueries().crear_materias(evento)
+
+        res = ResponseBase(
+            msg=f"{EnumMsg.CREACION.value} exitosa",
+            codigo=str(200),
+            status=True,
+            obj=results,
+        )
+    except PGError as e:
+        raise Exception(f"{EnumErrors.ERROR_QUERY.value}: {e}")
+    except Exception as e:
+        raise Exception(f"{EnumErrors.ERROR_INESPERADO.value}: {e}")
+
+    return res
 
 
 @router.put("/modificar-materias")
