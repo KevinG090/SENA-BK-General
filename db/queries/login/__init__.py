@@ -17,7 +17,7 @@ class LoginQueries(Connection):
         register_adapter(dict, Json_pyscopg2)
 
     # @staticmethod
-    async def buscar_usuario(
+    async def login_usuario(
         self,
         email: str,
         passworld: str,
@@ -28,8 +28,18 @@ class LoginQueries(Connection):
         }
 
         query = """
-            SELECT *
+            SELECT 
+                tbl_tipo_usuarios.*,
+                users.pk_id_usuario,
+                users.celular,
+                users.identificacion,
+                users.pk_id_usuario,
+                users.observaciones,
+                users.nombre_usuario,
+                users.correo
             FROM public.tbl_usuarios AS users
+            INNER JOIN public.tbl_tipo_usuarios 
+                ON (users.fk_id_tipo_usuario =  tbl_tipo_usuarios.pk_id_tipo_usuario)
             WHERE
                 UPPER(users.correo) LIKE UPPER('%%'||%(correo)s||'%%')
                 AND UPPER(users.contraseña) LIKE UPPER('%%'||%(passworld)s||'%%')
@@ -38,6 +48,39 @@ class LoginQueries(Connection):
 
         with self._open_connection(1) as conexion:
             with conexion.cursor(cursor_factory=RealDictCursor, name="login") as cursor:
+                cursor.execute(query, data)
+
+                res: Union[RealDictRow, None] = cursor.fetchone()
+
+                return res
+            
+    async def buscar_usuario(
+        self,
+        pk_id_usuario: int,
+    ) -> Union[RealDictRow, None]:
+        data = {
+            "pk_id_usuario": pk_id_usuario,
+        }
+
+        query = """
+            SELECT 
+                tbl_tipo_usuarios.*,
+                users.pk_id_usuario,
+                users.celular,
+                users.identificacion,
+                users.pk_id_usuario,
+                users.observaciones,
+                users.nombre_usuario,
+                users.correo
+            FROM public.tbl_usuarios AS users
+            INNER JOIN public.tbl_tipo_usuarios 
+                ON (users.fk_id_tipo_usuario =  tbl_tipo_usuarios.pk_id_tipo_usuario)
+            WHERE
+                users.pk_id_usuario = %(pk_id_usuario)s
+        """
+
+        with self._open_connection(1) as conexion:
+            with conexion.cursor(cursor_factory=RealDictCursor, name="search_user") as cursor:
                 cursor.execute(query, data)
 
                 res: Union[RealDictRow, None] = cursor.fetchone()
