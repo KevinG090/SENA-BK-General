@@ -65,7 +65,8 @@ class MateriasQueries(Connection):
                 return results
 
     async def crear_materias(self, data: InputCreacionMaterias) -> Dict[str, Any]:
-        query = """INSERT INTO public.tbl_materias(
+        query = """
+            INSERT INTO public.tbl_materias(
                 nombre_materia,
                 descripcion
             )

@@ -62,7 +62,8 @@ class EventosQueries(Connection):
                 return results
 
     async def crear_eventos(self, data: InputCreacionEvento) -> Dict[str, Any]:
-        query = """INSERT INTO public.tbl_eventos(
+        query = """
+            INSERT INTO public.tbl_eventos(
                 fk_id_curso,
                 nombre_evento,
                 contenido

@@ -61,11 +61,12 @@ class CursosQueries(Connection):
                 return results
 
     async def crear_cursos(self, data: InputCreacionCurso) -> Dict[str, Any]:
-        query = """INSERT INTO public.tbl_cursos(
-                nombre_curso,
+        query = """
+            INSERT INTO public.tbl_cursos(
+                nombre_curso
             )
             VALUES (
-                %(nombre_curso)s,
+                %(nombre_curso)s
             )
             RETURNING pk_id_curso;
         """
