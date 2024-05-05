@@ -58,7 +58,7 @@ class Settings(BaseSettings):
         if isinstance(value, str):
             return value
         return PostgresDsn.build(  # type: ignore
-            scheme="postgres",
+            scheme="postgresql",
             username=data.get("POSTGRES_READ_USER"),
             password=data.get("POSTGRES_READ_PASSWORD"),
             host=data.get("POSTGRES_READ_SERVER", ""),
@@ -76,7 +76,7 @@ class Settings(BaseSettings):
         if isinstance(value, str):
             return value
         return PostgresDsn.build(  # type: ignore
-            scheme="postgres",
+            scheme="postgresql",
             username=data.get("POSTGRES_WRITE_USER"),
             password=data.get("POSTGRES_WRITE_PASSWORD"),
             host=data.get("POSTGRES_WRITE_SERVER", ""),
