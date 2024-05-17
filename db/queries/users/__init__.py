@@ -120,7 +120,7 @@ class UsersQueries(Connection):
     ) -> Dict[str, Any]:
         query = """
             UPDATE public.tbl_usuarios
-            SET 
+            SET
                 nombre_usuario = COALESCE(
                     %(nombre_usuario)s,nombre_usuario
                 ),

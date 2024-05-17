@@ -13,7 +13,10 @@ from schemas.responses_model.common import (
     ErrorResponse,
     ResponseBase,
 )
-from schemas.responses_model.eventos import InputCreacionEvento,InputModificacionEventos
+from schemas.responses_model.eventos import (
+    InputCreacionEvento,
+    InputModificacionEventos,
+)
 
 router = APIRouter()
 
@@ -31,7 +34,7 @@ async def get_list_events(
     try:
         offset = (page - 1) * limit
         results = await EventosQueries().lista_paginada_eventos(
-            limit, offset, fk_id_curso, nombre_evento,pk_id_evento
+            limit, offset, fk_id_curso, nombre_evento, pk_id_evento
         )
 
         res = ResponseBase(
@@ -69,24 +72,21 @@ async def create_events(evento: InputCreacionEvento):
 
 
 @router.put("/modificar-eventos")
-async def edit_events(
-    pk_id_evento: str,
-    evento: InputModificacionEventos
-):
+async def edit_events(pk_id_evento: str, evento: InputModificacionEventos):
     """"""
     try:
         results_verify = await EventosQueries().verificar_eventos(pk_id_evento)
-        if not results_verify.get("results",None):
+        if not results_verify.get("results", None):
             raise ErrorResponse(
                 "No se encontro el evento",
                 error_status=404,
                 error_obj=DetailErrorObj(
                     user_msg="No se encontro el evento",
-                    complete_info="Error al validar el evento para poderlo modificar"
+                    complete_info="Error al validar el evento para poderlo modificar",
                 ),
             )
 
-        results_update = await EventosQueries().modificar_eventos(pk_id_evento,evento)
+        results_update = await EventosQueries().modificar_eventos(pk_id_evento, evento)
 
         res = ResponseBase(
             msg=f"{EnumMsg.MODIFICACION.value} exitosa",

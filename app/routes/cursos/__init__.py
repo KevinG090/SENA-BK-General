@@ -68,24 +68,21 @@ async def create_cursos(curso: InputCreacionCurso):
 
 
 @router.put("/modificar-cursos")
-async def edit_course(
-    pk_id_curso: str,
-    curso: InputModificacionCurso
-):
+async def edit_course(pk_id_curso: str, curso: InputModificacionCurso):
     """"""
     try:
         results_verify = await CursosQueries().verificar_cursos(pk_id_curso)
-        if not results_verify.get("results",None):
+        if not results_verify.get("results", None):
             raise ErrorResponse(
                 "No se encontro el curso",
                 error_status=404,
                 error_obj=DetailErrorObj(
                     user_msg="No se encontro el curso",
-                    complete_info="Error al validar el curso para poderlo modificar"
+                    complete_info="Error al validar el curso para poderlo modificar",
                 ),
             )
 
-        results_update = await CursosQueries().modificar_cursos(pk_id_curso,curso)
+        results_update = await CursosQueries().modificar_cursos(pk_id_curso, curso)
 
         res = ResponseBase(
             msg=f"{EnumMsg.MODIFICACION.value} exitosa",
@@ -101,4 +98,3 @@ async def edit_course(
         raise Exception(f"{EnumErrors.ERROR_INESPERADO.value}: {e}")
 
     return res
-

@@ -29,11 +29,14 @@ class InputCreacionEvento(BaseModel):
         new_val = validate_type_number(v)
         return v
 
+
 class InputModificacionEventos(BaseModel):
     """"""
 
     fk_id_curso: Optional[str] = Field(default=None, examples=[1], max_length=10)
-    nombre_evento: Optional[str] = Field(default=None, examples=["Nombre modificado"], max_length=20)
+    nombre_evento: Optional[str] = Field(
+        default=None, examples=["Nombre modificado"], max_length=20
+    )
     contenido: str = Field(
         ...,
         examples=[

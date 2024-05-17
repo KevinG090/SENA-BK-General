@@ -5,7 +5,10 @@ from typing import Any, Dict, List, Optional, Union
 from psycopg2.extras import RealDictCursor, RealDictRow
 
 from db.connection_optional import Connection
-from schemas.responses_model.eventos import InputCreacionEvento, InputModificacionEventos
+from schemas.responses_model.eventos import (
+    InputCreacionEvento,
+    InputModificacionEventos,
+)
 
 
 class EventosQueries(Connection):
@@ -84,7 +87,7 @@ class EventosQueries(Connection):
                 results = {"results": res}
 
                 return results
-            
+
     async def verificar_eventos(self, pk_id_evento: str) -> Dict[str, Any]:
         query = """
             SELECT *
@@ -95,9 +98,12 @@ class EventosQueries(Connection):
         """
         with self._open_connection(1) as conexion:
             with conexion.cursor(cursor_factory=RealDictCursor) as cursor:
-                cursor.execute(query, {
-                    "pk_id_evento":pk_id_evento,
-                })
+                cursor.execute(
+                    query,
+                    {
+                        "pk_id_evento": pk_id_evento,
+                    },
+                )
 
                 res: Union[RealDictRow, None] = cursor.fetchone()
 
@@ -105,10 +111,12 @@ class EventosQueries(Connection):
 
                 return results
 
-    async def modificar_eventos(self, pk_id_evento: str,data: InputModificacionEventos) -> Dict[str, Any]:
+    async def modificar_eventos(
+        self, pk_id_evento: str, data: InputModificacionEventos
+    ) -> Dict[str, Any]:
         query = """
             UPDATE public.tbl_eventos
-            SET 
+            SET
                 fk_id_curso = %(fk_id_curso)s,
                 nombre_evento = %(nombre_evento)s,
                 contenido = %(contenido)s
@@ -118,12 +126,15 @@ class EventosQueries(Connection):
         """
         with self._open_connection() as conexion:
             with conexion.cursor(cursor_factory=RealDictCursor) as cursor:
-                cursor.execute(query, {
-                    "pk_id_evento":pk_id_evento,
-                    "fk_id_curso":data.fk_id_curso,
-                    "nombre_evento":data.nombre_evento,
-                    "contenido":data.contenido
-                })
+                cursor.execute(
+                    query,
+                    {
+                        "pk_id_evento": pk_id_evento,
+                        "fk_id_curso": data.fk_id_curso,
+                        "nombre_evento": data.nombre_evento,
+                        "contenido": data.contenido,
+                    },
+                )
 
                 res: Union[RealDictRow, None] = cursor.fetchone()
 

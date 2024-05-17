@@ -8,6 +8,7 @@ class InputCreacionCurso(BaseModel):
 
     nombre_curso: str = Field(..., examples=["Nombre curso"], max_length=20)
 
+
 class InputModificacionCurso(BaseModel):
     """Modelo para la actualizacion del curso"""
 

@@ -40,6 +40,7 @@ async def verify(email: str, passworld: str):
 
     return res
 
+
 @router.get("/user")
 async def buscar_info_user(pk_id_usuario: int):
     """Metodo para validar que el correo"""

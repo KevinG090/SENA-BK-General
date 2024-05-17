@@ -79,7 +79,7 @@ class CursosQueries(Connection):
                 results = {"results": res}
 
                 return results
-            
+
     async def verificar_cursos(self, pk_id_curso: str) -> Dict[str, Any]:
         query = """
             SELECT
@@ -92,9 +92,12 @@ class CursosQueries(Connection):
         """
         with self._open_connection(1) as conexion:
             with conexion.cursor(cursor_factory=RealDictCursor) as cursor:
-                cursor.execute(query, {
-                    "pk_id_curso":pk_id_curso,
-                })
+                cursor.execute(
+                    query,
+                    {
+                        "pk_id_curso": pk_id_curso,
+                    },
+                )
 
                 res: Union[RealDictRow, None] = cursor.fetchone()
 
@@ -102,7 +105,9 @@ class CursosQueries(Connection):
 
                 return results
 
-    async def modificar_cursos(self, pk_id_curso: str,data: InputModificacionCurso) -> Dict[str, Any]:
+    async def modificar_cursos(
+        self, pk_id_curso: str, data: InputModificacionCurso
+    ) -> Dict[str, Any]:
         query = """
             UPDATE public.tbl_cursos
             SET nombre_curso = %(nombre_curso)s
@@ -112,10 +117,10 @@ class CursosQueries(Connection):
         """
         with self._open_connection() as conexion:
             with conexion.cursor(cursor_factory=RealDictCursor) as cursor:
-                cursor.execute(query, {
-                    "pk_id_curso":pk_id_curso,
-                    "nombre_curso":data.nombre_curso
-                })
+                cursor.execute(
+                    query,
+                    {"pk_id_curso": pk_id_curso, "nombre_curso": data.nombre_curso},
+                )
 
                 res: Union[RealDictRow, None] = cursor.fetchone()
 

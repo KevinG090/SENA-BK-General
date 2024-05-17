@@ -18,6 +18,7 @@ class InputCreacionMaterias(BaseModel):
         max_length=60,
     )
 
+
 class InputModificacionMateria(BaseModel):
     """"""
 
