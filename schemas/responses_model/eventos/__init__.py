@@ -28,3 +28,24 @@ class InputCreacionEvento(BaseModel):
         """"""
         new_val = validate_type_number(v)
         return v
+
+class InputModificacionEventos(BaseModel):
+    """"""
+
+    fk_id_curso: Optional[str] = Field(default=None, examples=[1], max_length=10)
+    nombre_evento: Optional[str] = Field(default=None, examples=["Nombre modificado"], max_length=20)
+    contenido: str = Field(
+        ...,
+        examples=[
+            "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod"
+            " tempor incididunt ut labore et dolore magna aliqua..."
+        ],
+        max_length=300,
+    )
+
+    @field_validator("fk_id_curso")
+    @classmethod
+    def validate_items(cls, v: Any):
+        """"""
+        new_val = validate_type_number(v)
+        return v

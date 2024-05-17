@@ -48,10 +48,10 @@ async def get_list_courses(
 
 
 @router.post("/crear-cursos")
-async def create_cursos(evento: InputCreacionCurso):
+async def create_cursos(curso: InputCreacionCurso):
     """"""
     try:
-        results = await CursosQueries().crear_cursos(evento)
+        results = await CursosQueries().crear_cursos(curso)
 
         res = ResponseBase(
             msg=f"{EnumMsg.CREACION.value} exitosa",
@@ -70,7 +70,7 @@ async def create_cursos(evento: InputCreacionCurso):
 @router.put("/modificar-cursos")
 async def edit_course(
     pk_id_curso: str,
-    evento: InputModificacionCurso
+    curso: InputModificacionCurso
 ):
     """"""
     try:
@@ -85,7 +85,7 @@ async def edit_course(
                 ),
             )
 
-        results_update = await CursosQueries().modificar_cursos(pk_id_curso,evento)
+        results_update = await CursosQueries().modificar_cursos(pk_id_curso,curso)
 
         res = ResponseBase(
             msg=f"{EnumMsg.MODIFICACION.value} exitosa",

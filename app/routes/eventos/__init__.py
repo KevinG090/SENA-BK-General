@@ -6,8 +6,14 @@ from fastapi import APIRouter
 from psycopg.errors import Error as PGError
 
 from db.queries.eventos import EventosQueries
-from schemas.responses_model.common import EnumErrors, EnumMsg, ResponseBase
-from schemas.responses_model.eventos import InputCreacionEvento
+from schemas.responses_model.common import (
+    DetailErrorObj,
+    EnumErrors,
+    EnumMsg,
+    ErrorResponse,
+    ResponseBase,
+)
+from schemas.responses_model.eventos import InputCreacionEvento,InputModificacionEventos
 
 router = APIRouter()
 
@@ -18,13 +24,14 @@ async def get_list_events(
     page: int = 1,
     fk_id_curso: Optional[str] = None,
     nombre_evento: Optional[str] = None,
+    pk_id_evento: Optional[str] = None,
 ):
     """Metodo para listar los cursos de manera paginada"""
 
     try:
         offset = (page - 1) * limit
         results = await EventosQueries().lista_paginada_eventos(
-            limit, offset, fk_id_curso, nombre_evento
+            limit, offset, fk_id_curso, nombre_evento,pk_id_evento
         )
 
         res = ResponseBase(
@@ -62,6 +69,36 @@ async def create_events(evento: InputCreacionEvento):
 
 
 @router.put("/modificar-eventos")
-async def edit_events():
+async def edit_events(
+    pk_id_evento: str,
+    evento: InputModificacionEventos
+):
     """"""
-    return [{"eventos": ""}]
+    try:
+        results_verify = await EventosQueries().verificar_eventos(pk_id_evento)
+        if not results_verify.get("results",None):
+            raise ErrorResponse(
+                "No se encontro el evento",
+                error_status=404,
+                error_obj=DetailErrorObj(
+                    user_msg="No se encontro el evento",
+                    complete_info="Error al validar el evento para poderlo modificar"
+                ),
+            )
+
+        results_update = await EventosQueries().modificar_eventos(pk_id_evento,evento)
+
+        res = ResponseBase(
+            msg=f"{EnumMsg.MODIFICACION.value} exitosa",
+            codigo=str(200),
+            status=True,
+            obj=results_update,
+        )
+    except ErrorResponse as exc_response:
+        raise exc_response
+    except PGError as e:
+        raise Exception(f"{EnumErrors.ERROR_QUERY.value}: {e}")
+    except Exception as e:
+        raise Exception(f"{EnumErrors.ERROR_INESPERADO.value}: {e}")
+
+    return res
