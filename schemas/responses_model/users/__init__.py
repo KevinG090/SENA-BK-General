@@ -32,3 +32,37 @@ class InputCreacionUsers(BaseModel):
     def change_return(cls, v: TipoUsuarios):
         """"""
         return int(v.value)
+
+
+class InputModificacionUsuario(BaseModel):
+    """"""
+
+    nombre_usuario: Optional[str] = Field(
+        default=None, examples=["nombre modificado"], max_length=50
+    )
+    celular: Optional[str] = Field(default=None, examples=["3444444444"], max_length=12)
+    correo: Optional[str] = Field(
+        default=None, examples=["exampleModificado@gmail.com"], max_length=50
+    )
+    identificacion: Optional[str] = Field(
+        default=None, examples=["987654321"], max_length=20
+    )
+    contraseña: Optional[str] = Field(
+        default=None, examples=["********2"], max_length=50
+    )
+    fk_id_tipo_usuario: Optional[TipoUsuarios] = Field(
+        default=None, examples=[TipoUsuarios.ESTUDIANTE.value]
+    )
+
+    @field_validator("identificacion")
+    @classmethod
+    def validate_items(cls, v: Any):
+        """"""
+        new_val = validate_type_number(v)
+        return v
+
+    @field_validator("fk_id_tipo_usuario", mode="after")
+    @classmethod
+    def change_return(cls, v: TipoUsuarios):
+        """"""
+        return int(v.value)

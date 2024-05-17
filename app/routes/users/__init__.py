@@ -6,8 +6,14 @@ from fastapi import APIRouter
 from psycopg.errors import Error as PGError
 
 from db.queries.users import UsersQueries
-from schemas.responses_model.common import EnumErrors, EnumMsg, ResponseBase
-from schemas.responses_model.users import InputCreacionUsers
+from schemas.responses_model.common import (
+    DetailErrorObj,
+    EnumErrors,
+    EnumMsg,
+    ErrorResponse,
+    ResponseBase,
+)
+from schemas.responses_model.users import InputCreacionUsers, InputModificacionUsuario
 
 router = APIRouter()
 
@@ -63,6 +69,33 @@ async def create_users(evento: InputCreacionUsers):
 
 
 @router.put("/modificar-usuarios")
-async def edit_users():
+async def edit_users(pk_id_usuario: str, usuario: InputModificacionUsuario):
     """"""
-    return [{"usuarios": ""}]
+    try:
+        results_verify = await UsersQueries().verificar_usuarios(pk_id_usuario)
+        if not results_verify.get("results", None):
+            raise ErrorResponse(
+                "No se encontro el usuario",
+                error_status=404,
+                error_obj=DetailErrorObj(
+                    user_msg="No se encontro el usuario",
+                    complete_info="Error al validar el usuario para poderlo modificar",
+                ),
+            )
+
+        results_update = await UsersQueries().modificar_usuarios(pk_id_usuario, usuario)
+
+        res = ResponseBase(
+            msg=f"{EnumMsg.MODIFICACION.value} exitosa",
+            codigo=str(200),
+            status=True,
+            obj=results_update,
+        )
+    except ErrorResponse as exc_response:
+        raise exc_response
+    except PGError as e:
+        raise Exception(f"{EnumErrors.ERROR_QUERY.value}: {e}")
+    except Exception as e:
+        raise Exception(f"{EnumErrors.ERROR_INESPERADO.value}: {e}")
+
+    return res
