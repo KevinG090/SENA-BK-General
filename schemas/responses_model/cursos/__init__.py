@@ -1,2 +1,2 @@
 """"""
-from .cursos import InputCreacionCurso
+from .cursos import InputCreacionCurso, InputModificacionCurso

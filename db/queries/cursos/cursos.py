@@ -5,7 +5,7 @@ from psycopg2.extras import RealDictCursor, RealDictRow
 
 from db.connection_optional import Connection
 from db.utils import Json_pyscopg2
-from schemas.responses_model.cursos import InputCreacionCurso
+from schemas.responses_model.cursos import InputCreacionCurso, InputModificacionCurso
 
 
 class CursosQueries(Connection):
@@ -73,6 +73,49 @@ class CursosQueries(Connection):
         with self._open_connection(1) as conexion:
             with conexion.cursor(cursor_factory=RealDictCursor) as cursor:
                 cursor.execute(query, data.dict())
+
+                res: Union[RealDictRow, None] = cursor.fetchone()
+
+                results = {"results": res}
+
+                return results
+            
+    async def verificar_cursos(self, pk_id_curso: str) -> Dict[str, Any]:
+        query = """
+            SELECT
+                pk_id_curso,
+                nombre_curso
+            FROM public.tbl_cursos
+            WHERE
+                pk_id_curso = %(pk_id_curso)s
+            ORDER BY pk_id_curso DESC
+        """
+        with self._open_connection(1) as conexion:
+            with conexion.cursor(cursor_factory=RealDictCursor) as cursor:
+                cursor.execute(query, {
+                    "pk_id_curso":pk_id_curso,
+                })
+
+                res: Union[RealDictRow, None] = cursor.fetchone()
+
+                results = {"results": res}
+
+                return results
+
+    async def modificar_cursos(self, pk_id_curso: str,data: InputModificacionCurso) -> Dict[str, Any]:
+        query = """
+            UPDATE public.tbl_cursos
+            SET nombre_curso = %(nombre_curso)s
+            WHERE
+                pk_id_curso = %(pk_id_curso)s
+            RETURNING pk_id_curso;
+        """
+        with self._open_connection() as conexion:
+            with conexion.cursor(cursor_factory=RealDictCursor) as cursor:
+                cursor.execute(query, {
+                    "pk_id_curso":pk_id_curso,
+                    "nombre_curso":data.nombre_curso
+                })
 
                 res: Union[RealDictRow, None] = cursor.fetchone()
 

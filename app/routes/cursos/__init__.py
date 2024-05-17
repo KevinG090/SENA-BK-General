@@ -6,8 +6,14 @@ from fastapi import APIRouter
 from psycopg.errors import Error as PGError
 
 from db.queries.cursos import CursosQueries
-from schemas.responses_model.common import EnumErrors, EnumMsg, ResponseBase
-from schemas.responses_model.cursos import InputCreacionCurso
+from schemas.responses_model.common import (
+    DetailErrorObj,
+    EnumErrors,
+    EnumMsg,
+    ErrorResponse,
+    ResponseBase,
+)
+from schemas.responses_model.cursos import InputCreacionCurso, InputModificacionCurso
 
 router = APIRouter()
 
@@ -62,6 +68,37 @@ async def create_cursos(evento: InputCreacionCurso):
 
 
 @router.put("/modificar-cursos")
-async def edit_course():
+async def edit_course(
+    pk_id_curso: str,
+    evento: InputModificacionCurso
+):
     """"""
-    return [{"cursos": ""}]
+    try:
+        results_verify = await CursosQueries().verificar_cursos(pk_id_curso)
+        if not results_verify.get("results",None):
+            raise ErrorResponse(
+                "No se encontro el curso",
+                error_status=404,
+                error_obj=DetailErrorObj(
+                    user_msg="No se encontro el curso",
+                    complete_info="Error al validar el curso para poderlo modificar"
+                ),
+            )
+
+        results_update = await CursosQueries().modificar_cursos(pk_id_curso,evento)
+
+        res = ResponseBase(
+            msg=f"{EnumMsg.MODIFICACION.value} exitosa",
+            codigo=str(200),
+            status=True,
+            obj=results_update,
+        )
+    except ErrorResponse as exc_response:
+        raise exc_response
+    except PGError as e:
+        raise Exception(f"{EnumErrors.ERROR_QUERY.value}: {e}")
+    except Exception as e:
+        raise Exception(f"{EnumErrors.ERROR_INESPERADO.value}: {e}")
+
+    return res
+
