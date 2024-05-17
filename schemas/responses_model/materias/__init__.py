@@ -17,3 +17,13 @@ class InputCreacionMaterias(BaseModel):
         examples=["Lorem ipsum dolor sit amet, consectetur adipiscing elit..."],
         max_length=60,
     )
+
+class InputModificacionMateria(BaseModel):
+    """"""
+
+    nombre_materia: Optional[str] = Field(examples=["Nombre modificado"], max_length=20)
+    descripcion: Optional[str] = Field(
+        default=None,
+        examples=["Lorem ipsum dolor sit amet, consectetur adipiscing elit..."],
+        max_length=60,
+    )

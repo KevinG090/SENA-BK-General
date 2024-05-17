@@ -6,8 +6,17 @@ from fastapi import APIRouter
 from psycopg.errors import Error as PGError
 
 from db.queries.materias import MateriasQueries
-from schemas.responses_model.common import EnumErrors, EnumMsg, ResponseBase
-from schemas.responses_model.materias import InputCreacionMaterias
+from schemas.responses_model.common import (
+    DetailErrorObj,
+    EnumErrors,
+    EnumMsg,
+    ErrorResponse,
+    ResponseBase,
+)
+from schemas.responses_model.materias import (
+    InputCreacionMaterias,
+    InputModificacionMateria,
+)
 
 router = APIRouter()
 
@@ -63,6 +72,35 @@ async def create_topics(evento: InputCreacionMaterias):
 
 
 @router.put("/modificar-materias")
-async def edit_topics():
+async def edit_topics(pk_id_materia: str, materia: InputModificacionMateria):
     """"""
-    return [{"materias": ""}]
+    try:
+        results_verify = await MateriasQueries().verificar_materias(pk_id_materia)
+        if not results_verify.get("results", None):
+            raise ErrorResponse(
+                "No se encontro la materia",
+                error_status=404,
+                error_obj=DetailErrorObj(
+                    user_msg="No se encontro la materia",
+                    complete_info="Error al validar la materia para poderlo modificar",
+                ),
+            )
+
+        results_update = await MateriasQueries().modificar_materias(
+            pk_id_materia, materia
+        )
+
+        res = ResponseBase(
+            msg=f"{EnumMsg.MODIFICACION.value} exitosa",
+            codigo=str(200),
+            status=True,
+            obj=results_update,
+        )
+    except ErrorResponse as exc_response:
+        raise exc_response
+    except PGError as e:
+        raise Exception(f"{EnumErrors.ERROR_QUERY.value}: {e}")
+    except Exception as e:
+        raise Exception(f"{EnumErrors.ERROR_INESPERADO.value}: {e}")
+
+    return res

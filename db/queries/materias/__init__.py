@@ -7,7 +7,7 @@ from psycopg2.extras import RealDictCursor, RealDictRow
 
 from db.connection_optional import Connection
 from db.utils import Json_pyscopg2
-from schemas.responses_model.materias import InputCreacionMaterias
+from schemas.responses_model.materias import InputCreacionMaterias, InputModificacionMateria
 
 
 class MateriasQueries(Connection):
@@ -79,6 +79,51 @@ class MateriasQueries(Connection):
         with self._open_connection(1) as conexion:
             with conexion.cursor(cursor_factory=RealDictCursor) as cursor:
                 cursor.execute(query, data.dict())
+
+                res: Union[RealDictRow, None] = cursor.fetchone()
+
+                results = {"results": res}
+
+                return results
+
+
+    async def verificar_materias(self, pk_id_materia: str) -> Dict[str, Any]:
+        query = """
+            SELECT *
+            FROM public.tbl_materias
+            WHERE
+                pk_id_materia = %(pk_id_materia)s
+            ORDER BY pk_id_materia DESC
+        """
+        with self._open_connection(1) as conexion:
+            with conexion.cursor(cursor_factory=RealDictCursor) as cursor:
+                cursor.execute(query, {
+                    "pk_id_materia":pk_id_materia,
+                })
+
+                res: Union[RealDictRow, None] = cursor.fetchone()
+
+                results = {"results": res}
+
+                return results
+
+    async def modificar_materias(self, pk_id_materia: str,data: InputModificacionMateria) -> Dict[str, Any]:
+        query = """
+            UPDATE public.tbl_materias
+            SET 
+                nombre_materia = %(nombre_materia)s,
+                descripcion = %(descripcion)s
+            WHERE
+                pk_id_materia = %(pk_id_materia)s
+            RETURNING pk_id_materia;
+        """
+        with self._open_connection() as conexion:
+            with conexion.cursor(cursor_factory=RealDictCursor) as cursor:
+                cursor.execute(query, {
+                    "pk_id_materia":pk_id_materia,
+                    "nombre_materia":data.nombre_materia,
+                    "descripcion":data.descripcion,
+                })
 
                 res: Union[RealDictRow, None] = cursor.fetchone()
 
