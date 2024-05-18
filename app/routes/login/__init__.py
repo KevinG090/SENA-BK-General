@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from psycopg.errors import Error as PGError
+from psycopg2.errors import DatabaseError, Error as PGError
 
 from db.queries.login import LoginQueries
 from schemas.responses_model.common import (
@@ -15,7 +15,7 @@ router = APIRouter()
 
 @router.get("/verify")
 async def verify(email: str, passworld: str):
-    """Metodo para validar que el correo"""
+    """Metodo para el login"""
 
     try:
         results = await LoginQueries().login_usuario(email=email, passworld=passworld)

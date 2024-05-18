@@ -3,7 +3,7 @@
 from typing import Optional
 
 from fastapi import APIRouter
-from psycopg.errors import Error as PGError
+from psycopg2.errors import DatabaseError, Error as PGError
 
 from db.queries.eventos import EventosQueries
 from schemas.responses_model.common import (
@@ -43,7 +43,7 @@ async def get_list_events(
             status=True,
             obj=results,
         )
-    except PGError as e:
+    except (DatabaseError,PGError) as e:
         raise Exception(f"{EnumErrors.ERROR_QUERY.value}: {e}")
     except Exception as e:
         raise Exception(f"{EnumErrors.ERROR_INESPERADO.value}: {e}")
@@ -63,7 +63,7 @@ async def create_events(evento: InputCreacionEvento):
             status=True,
             obj=results,
         )
-    except PGError as e:
+    except (DatabaseError,PGError) as e:
         raise Exception(f"{EnumErrors.ERROR_QUERY.value}: {e}")
     except Exception as e:
         raise Exception(f"{EnumErrors.ERROR_INESPERADO.value}: {e}")
@@ -96,7 +96,7 @@ async def edit_events(pk_id_evento: str, evento: InputModificacionEventos):
         )
     except ErrorResponse as exc_response:
         raise exc_response
-    except PGError as e:
+    except (DatabaseError,PGError) as e:
         raise Exception(f"{EnumErrors.ERROR_QUERY.value}: {e}")
     except Exception as e:
         raise Exception(f"{EnumErrors.ERROR_INESPERADO.value}: {e}")

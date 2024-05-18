@@ -42,7 +42,7 @@ class LoginQueries(Connection):
                 ON (users.fk_id_tipo_usuario =  tbl_tipo_usuarios.pk_id_tipo_usuario)
             WHERE
                 UPPER(users.correo) LIKE UPPER(%(correo)s)
-                AND UPPER(users.contraseña) LIKE UPPER(%(passworld)s)
+                AND users.contraseña = %(passworld)s
 
         """
 

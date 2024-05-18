@@ -3,7 +3,7 @@
 from typing import Optional
 
 from fastapi import APIRouter
-from psycopg.errors import Error as PGError
+from psycopg2.errors import DatabaseError, Error as PGError
 
 from db.queries.materias import MateriasQueries
 from schemas.responses_model.common import (
@@ -43,7 +43,7 @@ async def get_list_topics(
             status=True,
             obj=results,
         )
-    except PGError as e:
+    except (DatabaseError,PGError) as e:
         raise Exception(f"{EnumErrors.ERROR_QUERY.value}: {e}")
     except Exception as e:
         raise Exception(f"{EnumErrors.ERROR_INESPERADO.value}: {e}")
@@ -63,7 +63,7 @@ async def create_topics(evento: InputCreacionMaterias):
             status=True,
             obj=results,
         )
-    except PGError as e:
+    except (DatabaseError,PGError) as e:
         raise Exception(f"{EnumErrors.ERROR_QUERY.value}: {e}")
     except Exception as e:
         raise Exception(f"{EnumErrors.ERROR_INESPERADO.value}: {e}")
@@ -98,7 +98,7 @@ async def edit_topics(pk_id_materia: str, materia: InputModificacionMateria):
         )
     except ErrorResponse as exc_response:
         raise exc_response
-    except PGError as e:
+    except (DatabaseError,PGError) as e:
         raise Exception(f"{EnumErrors.ERROR_QUERY.value}: {e}")
     except Exception as e:
         raise Exception(f"{EnumErrors.ERROR_INESPERADO.value}: {e}")

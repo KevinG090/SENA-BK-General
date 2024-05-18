@@ -3,7 +3,7 @@
 from typing import Optional
 
 from fastapi import APIRouter
-from psycopg.errors import Error as PGError
+from psycopg2.errors import DatabaseError, Error as PGError
 
 from db.queries.users import UsersQueries
 from schemas.responses_model.common import (
@@ -40,7 +40,7 @@ async def get_list_users(
             status=True,
             obj=results,
         )
-    except PGError as e:
+    except (DatabaseError,PGError) as e:
         raise Exception(f"{EnumErrors.ERROR_QUERY.value}: {e}")
     except Exception as e:
         raise Exception(f"{EnumErrors.ERROR_INESPERADO.value}: {e}")
@@ -49,10 +49,11 @@ async def get_list_users(
 
 
 @router.post("/crear-usuarios")
-async def create_users(evento: InputCreacionUsers):
-    """"""
+async def create_users(usuario: InputCreacionUsers):
+    """Metodo para la creacion de usuarios"""
+
     try:
-        results = await UsersQueries().crear_usuarios(evento)
+        results = await UsersQueries().crear_usuarios(usuario)
 
         res = ResponseBase(
             msg=f"{EnumMsg.CREACION.value} exitosa",
@@ -60,7 +61,8 @@ async def create_users(evento: InputCreacionUsers):
             status=True,
             obj=results,
         )
-    except PGError as e:
+
+    except (DatabaseError,PGError) as e:
         raise Exception(f"{EnumErrors.ERROR_QUERY.value}: {e}")
     except Exception as e:
         raise Exception(f"{EnumErrors.ERROR_INESPERADO.value}: {e}")
@@ -93,7 +95,7 @@ async def edit_users(pk_id_usuario: str, usuario: InputModificacionUsuario):
         )
     except ErrorResponse as exc_response:
         raise exc_response
-    except PGError as e:
+    except (DatabaseError,PGError) as e:
         raise Exception(f"{EnumErrors.ERROR_QUERY.value}: {e}")
     except Exception as e:
         raise Exception(f"{EnumErrors.ERROR_INESPERADO.value}: {e}")

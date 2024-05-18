@@ -6,7 +6,7 @@ from asyncpg.exceptions._base import PostgresError
 from fastapi import FastAPI, Request, status
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
-from psycopg.errors import Error as PGError
+from psycopg2.errors import Error as PGError
 from pydantic_core import ValidationError
 
 from schemas.responses_model.common import (
