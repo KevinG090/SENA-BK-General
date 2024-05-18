@@ -76,24 +76,6 @@ class ResponseBase(BaseModel):
     obj: Any = {}
 
 
-class CreateResponse(BaseException):
-    def __init__(
-        self,
-        msg_res: EnumMsg,
-        codigo_res: int,
-        status_res: bool,
-        obj_res: AnyDict,
-    ):
-        res = ResponseBase(
-            msg=f"{msg_res.value} {'exitosa' if status_res else 'fallida'}",
-            codigo=str(codigo_res),
-            status=status_res,
-            obj=obj_res,
-        )
-
-        return res
-
-
 class ResponseBaseError(ResponseBase):
     """ """
 
@@ -148,3 +130,21 @@ class ErrorResponse(Exception):
     def error_list(self):
         """Dict with all errors acumulated per request"""
         return self._error_list
+
+
+class ExceptionResponse(ErrorResponse):
+
+    def __init__(
+        self,
+        error_msg: str,
+        error_status: int = 500,
+    ):
+
+        super().__init__(
+            "Peticion fallida",
+            error_status,
+            error_obj=DetailErrorObj(
+                user_msg="Peticion fallida",
+                complete_info=error_msg,
+            ),
+        )

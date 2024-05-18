@@ -12,6 +12,7 @@ from schemas.responses_model.common import (
     EnumMsg,
     ErrorResponse,
     ResponseBase,
+    ExceptionResponse,
 )
 from schemas.responses_model.materias import (
     InputCreacionMaterias,
@@ -44,9 +45,9 @@ async def get_list_topics(
             obj=results,
         )
     except (DatabaseError,PGError) as e:
-        raise Exception(f"{EnumErrors.ERROR_QUERY.value}: {e}")
+        raise ExceptionResponse(f"{EnumErrors.ERROR_QUERY.value}: {e}")
     except Exception as e:
-        raise Exception(f"{EnumErrors.ERROR_INESPERADO.value}: {e}")
+        raise ExceptionResponse(f"{EnumErrors.ERROR_INESPERADO.value}: {e}")
 
     return res
 
@@ -64,9 +65,9 @@ async def create_topics(evento: InputCreacionMaterias):
             obj=results,
         )
     except (DatabaseError,PGError) as e:
-        raise Exception(f"{EnumErrors.ERROR_QUERY.value}: {e}")
+        raise ExceptionResponse(f"{EnumErrors.ERROR_QUERY.value}: {e}")
     except Exception as e:
-        raise Exception(f"{EnumErrors.ERROR_INESPERADO.value}: {e}")
+        raise ExceptionResponse(f"{EnumErrors.ERROR_INESPERADO.value}: {e}")
 
     return res
 
@@ -99,8 +100,8 @@ async def edit_topics(pk_id_materia: str, materia: InputModificacionMateria):
     except ErrorResponse as exc_response:
         raise exc_response
     except (DatabaseError,PGError) as e:
-        raise Exception(f"{EnumErrors.ERROR_QUERY.value}: {e}")
+        raise ExceptionResponse(f"{EnumErrors.ERROR_QUERY.value}: {e}")
     except Exception as e:
-        raise Exception(f"{EnumErrors.ERROR_INESPERADO.value}: {e}")
+        raise ExceptionResponse(f"{EnumErrors.ERROR_INESPERADO.value}: {e}")
 
     return res

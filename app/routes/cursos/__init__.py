@@ -12,6 +12,7 @@ from schemas.responses_model.common import (
     EnumMsg,
     ErrorResponse,
     ResponseBase,
+    ExceptionResponse
 )
 from schemas.responses_model.cursos import InputCreacionCurso, InputModificacionCurso
 
@@ -40,9 +41,9 @@ async def get_list_courses(
             obj=results,
         )
     except (DatabaseError,PGError) as e:
-        raise Exception(f"{EnumErrors.ERROR_QUERY.value}: {e}")
+        raise ExceptionResponse(f"{EnumErrors.ERROR_QUERY.value}: {e}")
     except Exception as e:
-        raise Exception(f"{EnumErrors.ERROR_INESPERADO.value}: {e}")
+        raise ExceptionResponse(f"{EnumErrors.ERROR_INESPERADO.value}: {e}")
 
     return res
 
@@ -60,9 +61,9 @@ async def create_cursos(curso: InputCreacionCurso):
             obj=results,
         )
     except (DatabaseError,PGError) as e:
-        raise Exception(f"{EnumErrors.ERROR_QUERY.value}: {e}")
+        raise ExceptionResponse(f"{EnumErrors.ERROR_QUERY.value}: {e}")
     except Exception as e:
-        raise Exception(f"{EnumErrors.ERROR_INESPERADO.value}: {e}")
+        raise ExceptionResponse(f"{EnumErrors.ERROR_INESPERADO.value}: {e}")
 
     return res
 
@@ -93,8 +94,8 @@ async def edit_course(pk_id_curso: str, curso: InputModificacionCurso):
     except ErrorResponse as exc_response:
         raise exc_response
     except (DatabaseError,PGError) as e:
-        raise Exception(f"{EnumErrors.ERROR_QUERY.value}: {e}")
+        raise ExceptionResponse(f"{EnumErrors.ERROR_QUERY.value}: {e}")
     except Exception as e:
-        raise Exception(f"{EnumErrors.ERROR_INESPERADO.value}: {e}")
+        raise ExceptionResponse(f"{EnumErrors.ERROR_INESPERADO.value}: {e}")
 
     return res

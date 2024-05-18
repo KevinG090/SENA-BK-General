@@ -8,6 +8,7 @@ from schemas.responses_model.common import (
     EnumMsg,
     ErrorResponse,
     ResponseBase,
+    ExceptionResponse,
 )
 
 router = APIRouter()
@@ -34,9 +35,9 @@ async def verify(email: str, passworld: str):
     except ErrorResponse as exc_response:
         raise exc_response
     except PGError as exc_response:
-        raise Exception(f"{EnumErrors.ERROR_QUERY.value}: {exc_response}")
+        raise ExceptionResponse(f"{EnumErrors.ERROR_QUERY.value}: {exc_response}")
     except Exception as exc_response:
-        raise Exception(f"{EnumErrors.ERROR_INESPERADO.value}: {exc_response}")
+        raise ExceptionResponse(f"{EnumErrors.ERROR_INESPERADO.value}: {exc_response}")
 
     return res
 
@@ -62,8 +63,8 @@ async def buscar_info_user(pk_id_usuario: int):
     except ErrorResponse as exc_response:
         raise exc_response
     except PGError as exc_response:
-        raise Exception(f"{EnumErrors.ERROR_QUERY.value}: {exc_response}")
+        raise ExceptionResponse(f"{EnumErrors.ERROR_QUERY.value}: {exc_response}")
     except Exception as exc_response:
-        raise Exception(f"{EnumErrors.ERROR_INESPERADO.value}: {exc_response}")
+        raise ExceptionResponse(f"{EnumErrors.ERROR_INESPERADO.value}: {exc_response}")
 
     return res

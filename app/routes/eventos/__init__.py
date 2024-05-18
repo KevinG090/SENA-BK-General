@@ -12,6 +12,7 @@ from schemas.responses_model.common import (
     EnumMsg,
     ErrorResponse,
     ResponseBase,
+    ExceptionResponse,
 )
 from schemas.responses_model.eventos import (
     InputCreacionEvento,
@@ -44,9 +45,9 @@ async def get_list_events(
             obj=results,
         )
     except (DatabaseError,PGError) as e:
-        raise Exception(f"{EnumErrors.ERROR_QUERY.value}: {e}")
+        raise ExceptionResponse(f"{EnumErrors.ERROR_QUERY.value}: {e}")
     except Exception as e:
-        raise Exception(f"{EnumErrors.ERROR_INESPERADO.value}: {e}")
+        raise ExceptionResponse(f"{EnumErrors.ERROR_INESPERADO.value}: {e}")
 
     return res
 
@@ -64,9 +65,9 @@ async def create_events(evento: InputCreacionEvento):
             obj=results,
         )
     except (DatabaseError,PGError) as e:
-        raise Exception(f"{EnumErrors.ERROR_QUERY.value}: {e}")
+        raise ExceptionResponse(f"{EnumErrors.ERROR_QUERY.value}: {e}")
     except Exception as e:
-        raise Exception(f"{EnumErrors.ERROR_INESPERADO.value}: {e}")
+        raise ExceptionResponse(f"{EnumErrors.ERROR_INESPERADO.value}: {e}")
 
     return res
 
@@ -97,8 +98,8 @@ async def edit_events(pk_id_evento: str, evento: InputModificacionEventos):
     except ErrorResponse as exc_response:
         raise exc_response
     except (DatabaseError,PGError) as e:
-        raise Exception(f"{EnumErrors.ERROR_QUERY.value}: {e}")
+        raise ExceptionResponse(f"{EnumErrors.ERROR_QUERY.value}: {e}")
     except Exception as e:
-        raise Exception(f"{EnumErrors.ERROR_INESPERADO.value}: {e}")
+        raise ExceptionResponse(f"{EnumErrors.ERROR_INESPERADO.value}: {e}")
 
     return res
