@@ -102,3 +102,33 @@ async def edit_users(pk_id_usuario: str, usuario: InputModificacionUsuario):
         raise ExceptionResponse(f"{EnumErrors.ERROR_INESPERADO.value}: {e}")
 
     return res
+
+
+@router.get("/consultar-usuario-especifico")
+async def search_specify_user(pk_id_usuario: str):
+    """"""
+    try:
+        results_verify = await UsersQueries().verificar_usuarios(pk_id_usuario)
+        if not results_verify.get("results", None):
+            raise ErrorResponse(
+                "No se encontro el usuario",
+                error_status=404,
+                error_obj=DetailErrorObj(
+                    user_msg="No se encontro el usuario",
+                    complete_info="Error al validar el usuario para poderlo modificar",
+                ),
+            )
+        res = ResponseBase(
+            msg=f"{EnumMsg.CONSULTA.value} exitosa",
+            codigo=str(200),
+            status=True,
+            obj=results_verify,
+        )
+    except ErrorResponse as exc_response:
+        raise exc_response
+    except (DatabaseError,PGError) as e:
+        raise ExceptionResponse(f"{EnumErrors.ERROR_QUERY.value}: {e}")
+    except Exception as e:
+        raise ExceptionResponse(f"{EnumErrors.ERROR_INESPERADO.value}: {e}")
+
+    return res
