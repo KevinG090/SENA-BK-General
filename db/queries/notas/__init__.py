@@ -45,7 +45,7 @@ class NotasQueries(Connection):
 
         query = """
             SELECT
-                tbl_notas.*,
+                ARRAY_AGG(tbl_notas.nota) AS notas,
                 tbl_usuarios.nombre_usuario,
                 tbl_cursos.nombre_curso,
                 tbl_materias.nombre_materia
@@ -88,7 +88,13 @@ class NotasQueries(Connection):
                     %(pk_id_usuario)s,
                     pk_id_usuario
                 )
-            ORDER BY pk_id_nota DESC
+            GROUP BY
+				tbl_usuarios.nombre_usuario,
+				tbl_usuarios.pk_id_usuario,
+				tbl_cursos.nombre_curso,
+				tbl_materias.nombre_materia,
+				tbl_materias.pk_id_materia
+            ORDER BY notas DESC
         """
 
         with self._open_connection(1) as conexion:

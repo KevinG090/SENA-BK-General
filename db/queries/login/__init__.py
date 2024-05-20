@@ -36,10 +36,18 @@ class LoginQueries(Connection):
                 users.pk_id_usuario,
                 users.observaciones,
                 users.nombre_usuario,
+                COALESCE(tbl_cursos.nombre_curso,null) AS nombre_curso,
+				COALESCE(tbl_cursos.pk_id_curso,null) AS pk_id_curso,
                 users.correo
             FROM public.tbl_usuarios AS users
             INNER JOIN public.tbl_tipo_usuarios
                 ON (users.fk_id_tipo_usuario =  tbl_tipo_usuarios.pk_id_tipo_usuario)
+            LEFT JOIN u_tbl_usuarios_cursos ON (
+				users.pk_id_usuario = u_tbl_usuarios_cursos.fk_id_usuario
+			)
+			LEFT JOIN tbl_cursos ON (
+				u_tbl_usuarios_cursos.fk_id_curso = tbl_cursos.pk_id_curso
+			)
             WHERE
                 UPPER(users.correo) LIKE UPPER(%(correo)s)
                 AND users.contraseña = %(passworld)s
@@ -71,10 +79,18 @@ class LoginQueries(Connection):
                 users.pk_id_usuario,
                 users.observaciones,
                 users.nombre_usuario,
+                COALESCE(tbl_cursos.nombre_curso,null) AS nombre_curso,
+				COALESCE(tbl_cursos.pk_id_curso,null) AS pk_id_curso,
                 users.correo
             FROM public.tbl_usuarios AS users
             INNER JOIN public.tbl_tipo_usuarios
                 ON (users.fk_id_tipo_usuario =  tbl_tipo_usuarios.pk_id_tipo_usuario)
+			LEFT JOIN u_tbl_usuarios_cursos ON (
+				users.pk_id_usuario = u_tbl_usuarios_cursos.fk_id_usuario
+			)
+			LEFT JOIN tbl_cursos ON (
+				u_tbl_usuarios_cursos.fk_id_curso = tbl_cursos.pk_id_curso
+			)
             WHERE
                 users.pk_id_usuario = %(pk_id_usuario)s
         """
