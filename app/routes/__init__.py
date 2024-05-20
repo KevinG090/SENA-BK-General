@@ -2,7 +2,7 @@
 
 from fastapi import APIRouter
 
-from app.routes import cursos, eventos, login, materias, users
+from app.routes import cursos, eventos, login, materias, users, notas
 
 router = APIRouter()
 
@@ -38,5 +38,12 @@ router.include_router(
     materias.router,
     prefix="/materias",
     tags=["Materias"],
+    # responses=responses_handlers
+)
+
+router.include_router(
+    notas.router,
+    prefix="/notas",
+    tags=["Notas"],
     # responses=responses_handlers
 )

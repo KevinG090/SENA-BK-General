@@ -13,7 +13,7 @@ from schemas.responses_model.materias import (
 )
 
 
-class MateriasQueries(Connection):
+class NotasQueries(Connection):
     """Clase para queries de los materias"""
 
     def __init__(self) -> None:
@@ -21,7 +21,7 @@ class MateriasQueries(Connection):
         register_adapter(dict, Json_pyscopg2)
 
     # @staticmethod
-    async def lista_paginada_materias(
+    async def lista_paginada_notas(
         self,
         limit: int = 10,
         offset: int = 0,
@@ -29,6 +29,7 @@ class MateriasQueries(Connection):
         nombre_materia: Optional[str] = None,
         pk_id_curso: Optional[str] = None,
         nombre_curso: Optional[str] = None,
+        pk_id_usuario: Optional[str] = None,
     ) -> Dict[str, Any]:
         data = {
             "pk_id_materia": pk_id_materia,
@@ -39,38 +40,55 @@ class MateriasQueries(Connection):
             "nombre_curso": (
                 nombre_curso.upper() if not nombre_curso is None else None
             ),
+            "pk_id_usuario": pk_id_usuario,
         }
 
         query = """
             SELECT
-                tbl_materias.*,
-				tbl_cursos.pk_id_curso,
-				tbl_cursos.nombre_curso
-            FROM public.tbl_materias
-            INNER JOIN u_tbl_cursos_materias ON (
-                tbl_materias.pk_id_materia = u_tbl_cursos_materias.fk_id_materia
+                tbl_notas.*,
+                tbl_usuarios.nombre_usuario,
+                tbl_cursos.nombre_curso,
+                tbl_materias.nombre_materia
+            FROM public.tbl_notas
+            INNER JOIN u_tbl_usuarios_cursos ON (
+                tbl_notas.fk_relacion_usuario_curso = u_tbl_usuarios_cursos.pk_relacion_usuario_curso
             )
             INNER JOIN tbl_cursos ON (
-                u_tbl_cursos_materias.fk_id_curso = tbl_cursos.pk_id_curso
+                tbl_cursos.pk_id_curso = u_tbl_usuarios_cursos.fk_id_curso
+            )
+            INNER JOIN tbl_usuarios ON (
+                u_tbl_usuarios_cursos.fk_id_usuario = tbl_usuarios.pk_id_usuario
+            )
+            INNER JOIN u_tbl_cursos_materias ON (
+                tbl_notas.fk_relacion_curso_materia = u_tbl_cursos_materias.pk_relacion_curso_materia
+                AND tbl_cursos.pk_id_curso = u_tbl_cursos_materias.fk_id_curso
+                AND u_tbl_usuarios_cursos.fk_id_curso = u_tbl_cursos_materias.fk_id_curso
+            )
+            INNER JOIN tbl_materias ON (
+                u_tbl_cursos_materias.fk_id_materia = tbl_materias.pk_id_materia
             )
             WHERE
-                pk_id_materia::TEXT LIKE COALESCE(
-                    '%%'||%(pk_id_materia)s||'%%',
-                    pk_id_materia::TEXT
-                )
-                AND UPPER(nombre_materia) LIKE COALESCE(
+                UPPER(nombre_materia) LIKE COALESCE(
                     '%%'||%(nombre_materia)s||'%%',
                     UPPER(nombre_materia)
-                )
-                AND pk_id_curso::TEXT LIKE COALESCE(
-                    '%%'||%(pk_id_curso)s||'%%',
-                    pk_id_curso::TEXT
                 )
                 AND UPPER(nombre_curso) LIKE COALESCE(
                     '%%'||%(nombre_curso)s||'%%',
                     UPPER(nombre_curso)
                 )
-            ORDER BY pk_id_materia DESC
+                AND pk_id_materia = COALESCE(
+                    %(pk_id_materia)s,
+                    pk_id_materia
+                )
+                AND pk_id_curso = COALESCE(
+                    %(pk_id_curso)s,
+                    pk_id_curso
+                )
+                AND pk_id_usuario = COALESCE(
+                    %(pk_id_usuario)s,
+                    pk_id_usuario
+                )
+            ORDER BY pk_id_nota DESC
         """
 
         with self._open_connection(1) as conexion:

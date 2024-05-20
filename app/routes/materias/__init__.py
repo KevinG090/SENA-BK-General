@@ -28,6 +28,8 @@ async def get_list_topics(
     page: int = 1,
     pk_id_materia: Optional[str] = None,
     nombre_materia: Optional[str] = None,
+    pk_id_curso: Optional[str] = None,
+    nombre_curso: Optional[str] = None,
 ):
     """"""
     try:
@@ -37,6 +39,8 @@ async def get_list_topics(
             offset,
             pk_id_materia,
             nombre_materia,
+            pk_id_curso,
+            nombre_curso,
         )
         res = ResponseBase(
             msg=f"{EnumMsg.CONSULTA_PAGINADA.value} exitosa",
