@@ -1,4 +1,4 @@
-""" Modelos de eventos """
+""" Modelos de cursos """
 
 from pydantic import BaseModel, Field
 

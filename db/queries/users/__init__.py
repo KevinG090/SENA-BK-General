@@ -159,3 +159,31 @@ class UsersQueries(Connection):
                 results = {"results": res}
 
                 return results
+
+    async def asignar_curso_usuario(
+        self, pk_id_usuario: int, pk_id_curso: int
+    ) -> Dict[str, Any]:
+        """Metodo para asignarle un curso al usuario"""
+
+        query = """
+            INSERT INTO public.u_tbl_usuarios_cursos(
+                fk_id_usuario,
+                fk_id_curso
+            )
+            VALUES (
+                %(fk_id_usuario)s,
+                %(fk_id_curso)s
+            )
+            RETURNING pk_relacion_usuario_curso;
+        """
+        with self._open_connection(1) as conexion:
+            with conexion.cursor(cursor_factory=RealDictCursor) as cursor:
+                cursor.execute(
+                    query, {"fk_id_usuario": pk_id_usuario, "fk_id_curso": pk_id_curso}
+                )
+
+                res: Union[RealDictRow, None] = cursor.fetchone()
+
+                results = {"results": res}
+
+                return results

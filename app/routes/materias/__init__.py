@@ -17,6 +17,7 @@ from schemas.responses_model.common import (
 from schemas.responses_model.materias import (
     InputCreacionMaterias,
     InputModificacionMateria,
+    InputAsignacionMateriasCursos,
 )
 
 router = APIRouter()
@@ -48,7 +49,7 @@ async def get_list_topics(
             status=True,
             obj=results,
         )
-    except (DatabaseError,PGError) as e:
+    except (DatabaseError, PGError) as e:
         raise ExceptionResponse(f"{EnumErrors.ERROR_QUERY.value}: {e}")
     except Exception as e:
         raise ExceptionResponse(f"{EnumErrors.ERROR_INESPERADO.value}: {e}")
@@ -57,10 +58,10 @@ async def get_list_topics(
 
 
 @router.post("/crear-materias")
-async def create_topics(evento: InputCreacionMaterias):
+async def create_topics(materia: InputCreacionMaterias):
     """"""
     try:
-        results = await MateriasQueries().crear_materias(evento)
+        results = await MateriasQueries().crear_materias(materia)
 
         res = ResponseBase(
             msg=f"{EnumMsg.CREACION.value} exitosa",
@@ -68,7 +69,7 @@ async def create_topics(evento: InputCreacionMaterias):
             status=True,
             obj=results,
         )
-    except (DatabaseError,PGError) as e:
+    except (DatabaseError, PGError) as e:
         raise ExceptionResponse(f"{EnumErrors.ERROR_QUERY.value}: {e}")
     except Exception as e:
         raise ExceptionResponse(f"{EnumErrors.ERROR_INESPERADO.value}: {e}")
@@ -103,7 +104,29 @@ async def edit_topics(pk_id_materia: str, materia: InputModificacionMateria):
         )
     except ErrorResponse as exc_response:
         raise exc_response
-    except (DatabaseError,PGError) as e:
+    except (DatabaseError, PGError) as e:
+        raise ExceptionResponse(f"{EnumErrors.ERROR_QUERY.value}: {e}")
+    except Exception as e:
+        raise ExceptionResponse(f"{EnumErrors.ERROR_INESPERADO.value}: {e}")
+
+    return res
+
+
+@router.post("/asignar-curso-materias")
+async def assign_course_subjects(data: InputAsignacionMateriasCursos):
+    """"""
+    try:
+        results = await MateriasQueries().asignar_curso_materias(
+            data.pk_id_materia, data.pk_id_curso
+        )
+
+        res = ResponseBase(
+            msg=f"{EnumMsg.ASIGNACION.value} exitosa",
+            codigo=str(200),
+            status=True,
+            obj=results,
+        )
+    except (DatabaseError, PGError) as e:
         raise ExceptionResponse(f"{EnumErrors.ERROR_QUERY.value}: {e}")
     except Exception as e:
         raise ExceptionResponse(f"{EnumErrors.ERROR_INESPERADO.value}: {e}")

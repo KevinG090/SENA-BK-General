@@ -44,6 +44,7 @@ class EnumMsg(Enum):
     MODIFICACION = "Modificacion"\n
     CREACION = "Creacion"\n
     PETICION = "Peticion"\n
+    ASIGNACION = "asignacion"\n
     """
 
     CONSULTA = "Consulta"
@@ -52,6 +53,7 @@ class EnumMsg(Enum):
     MODIFICACION = "Modificacion"
     CREACION = "Creacion"
     PETICION = "Peticion"
+    ASIGNACION = "asignacion"
 
 
 class ModelConfig(BaseModel):

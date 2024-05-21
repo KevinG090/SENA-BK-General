@@ -12,9 +12,13 @@ from schemas.responses_model.common import (
     EnumMsg,
     ErrorResponse,
     ResponseBase,
-    ExceptionResponse
+    ExceptionResponse,
 )
-from schemas.responses_model.users import InputCreacionUsers, InputModificacionUsuario
+from schemas.responses_model.users import (
+    InputCreacionUsers,
+    InputModificacionUsuario,
+    InputAsignacionUsuariosCursos,
+)
 
 router = APIRouter()
 
@@ -41,7 +45,7 @@ async def get_list_users(
             status=True,
             obj=results,
         )
-    except (DatabaseError,PGError) as e:
+    except (DatabaseError, PGError) as e:
         raise ExceptionResponse(f"{EnumErrors.ERROR_QUERY.value}: {e}")
     except Exception as e:
         raise ExceptionResponse(f"{EnumErrors.ERROR_INESPERADO.value}: {e}")
@@ -63,7 +67,7 @@ async def create_users(usuario: InputCreacionUsers):
             obj=results,
         )
 
-    except (DatabaseError,PGError) as e:
+    except (DatabaseError, PGError) as e:
         raise ExceptionResponse(f"{EnumErrors.ERROR_QUERY.value}: {e}")
     except Exception as e:
         raise ExceptionResponse(f"{EnumErrors.ERROR_INESPERADO.value}: {e}")
@@ -96,7 +100,7 @@ async def edit_users(pk_id_usuario: str, usuario: InputModificacionUsuario):
         )
     except ErrorResponse as exc_response:
         raise exc_response
-    except (DatabaseError,PGError) as e:
+    except (DatabaseError, PGError) as e:
         raise ExceptionResponse(f"{EnumErrors.ERROR_QUERY.value}: {e}")
     except Exception as e:
         raise ExceptionResponse(f"{EnumErrors.ERROR_INESPERADO.value}: {e}")
@@ -126,7 +130,29 @@ async def search_specify_user(pk_id_usuario: str):
         )
     except ErrorResponse as exc_response:
         raise exc_response
-    except (DatabaseError,PGError) as e:
+    except (DatabaseError, PGError) as e:
+        raise ExceptionResponse(f"{EnumErrors.ERROR_QUERY.value}: {e}")
+    except Exception as e:
+        raise ExceptionResponse(f"{EnumErrors.ERROR_INESPERADO.value}: {e}")
+
+    return res
+
+
+@router.post("/asignar-usuarios-cursos")
+async def assign_users_courses(data: InputAsignacionUsuariosCursos):
+    """"""
+    try:
+        results = await UsersQueries().asignar_curso_usuario(
+            data.pk_id_usuario, data.pk_id_curso
+        )
+
+        res = ResponseBase(
+            msg=f"{EnumMsg.ASIGNACION.value} exitosa",
+            codigo=str(200),
+            status=True,
+            obj=results,
+        )
+    except (DatabaseError, PGError) as e:
         raise ExceptionResponse(f"{EnumErrors.ERROR_QUERY.value}: {e}")
     except Exception as e:
         raise ExceptionResponse(f"{EnumErrors.ERROR_INESPERADO.value}: {e}")

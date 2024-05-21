@@ -7,14 +7,14 @@ from psycopg2.extras import RealDictCursor, RealDictRow
 
 from db.connection_optional import Connection
 from db.utils import Json_pyscopg2
-from schemas.responses_model.materias import (
-    InputCreacionMaterias,
-    InputModificacionMateria,
+from schemas.responses_model.notas import (
+    InputCreacionNota,
+    InputModificacionNota,
 )
 
 
 class NotasQueries(Connection):
-    """Clase para queries de los materias"""
+    """Clase para queries de los notas"""
 
     def __init__(self) -> None:
         super().__init__()
@@ -100,7 +100,7 @@ class NotasQueries(Connection):
         with self._open_connection(1) as conexion:
             with conexion.cursor(
                 cursor_factory=RealDictCursor,
-                name="consulta_paginada_materias",
+                name="consulta_paginada_notas",
                 scrollable=True,
             ) as cursor:
                 cursor.execute(query, data)
@@ -112,17 +112,65 @@ class NotasQueries(Connection):
 
                 return results
 
-    async def crear_materias(self, data: InputCreacionMaterias) -> Dict[str, Any]:
+    async def verificar_config_estudiante(
+        self, pk_relacion_usuario_curso: int, pk_relacion_curso_materia: int
+    ) -> Dict[str, Any]:
         query = """
-            INSERT INTO public.tbl_materias(
-                nombre_materia,
-                descripcion
+            SELECT 
+                tbl_usuarios.pk_id_usuario,
+                tbl_usuarios.nombre_usuario,
+                tbl_materias.nombre_materia,
+                tbl_cursos.nombre_curso
+            FROM public.tbl_usuarios
+            INNER JOIN u_tbl_usuarios_cursos ON (
+                tbl_usuarios.pk_id_usuario = u_tbl_usuarios_cursos.fk_id_usuario
+            )
+            INNER JOIN u_tbl_cursos_materias ON (
+                u_tbl_usuarios_cursos.fk_id_curso = u_tbl_cursos_materias.fk_id_curso
+            )
+            INNER JOIN tbl_cursos ON (
+                u_tbl_usuarios_cursos.fk_id_curso = tbl_cursos.pk_id_curso
+                AND u_tbl_usuarios_cursos.fk_id_curso = tbl_cursos.pk_id_curso
+            )
+            INNER JOIN tbl_materias ON (
+                u_tbl_cursos_materias.fk_id_materia = tbl_materias.pk_id_materia
+            )
+            WHERE
+                pk_relacion_usuario_curso = %(pk_relacion_usuario_curso)s
+                AND pk_relacion_curso_materia = %(pk_relacion_curso_materia)s
+            ORDER BY pk_id_usuario DESC
+        """
+        with self._open_connection(1) as conexion:
+            with conexion.cursor(cursor_factory=RealDictCursor) as cursor:
+                cursor.execute(
+                    query,
+                    {
+                        "pk_relacion_usuario_curso": pk_relacion_usuario_curso,
+                        "pk_relacion_curso_materia": pk_relacion_curso_materia,
+                    },
+                )
+
+                res: Union[RealDictRow, None] = cursor.fetchone()
+
+                results = {"results": res}
+
+                return results
+
+    async def crear_notas(self, data: InputCreacionNota) -> Dict[str, Any]:
+        query = """
+            INSERT INTO public.tbl_notas(
+                nota,
+                observaciones,
+                fk_relacion_usuario_curso,
+                fk_relacion_curso_materia
             )
             VALUES (
-                %(nombre_materia)s,
-                %(descripcion)s
+                %(nota)s,
+                %(observaciones)s,
+                %(fk_relacion_usuario_curso)s,
+                %(fk_relacion_curso_materia)s
             )
-            RETURNING pk_id_materia;
+            RETURNING pk_id_nota;
         """
         with self._open_connection(1) as conexion:
             with conexion.cursor(cursor_factory=RealDictCursor) as cursor:
@@ -134,50 +182,22 @@ class NotasQueries(Connection):
 
                 return results
 
-    async def verificar_materias(self, pk_id_materia: str) -> Dict[str, Any]:
-        query = """
-            SELECT *
-            FROM public.tbl_materias
-            WHERE
-                pk_id_materia = %(pk_id_materia)s
-            ORDER BY pk_id_materia DESC
-        """
-        with self._open_connection(1) as conexion:
-            with conexion.cursor(cursor_factory=RealDictCursor) as cursor:
-                cursor.execute(
-                    query,
-                    {
-                        "pk_id_materia": pk_id_materia,
-                    },
-                )
-
-                res: Union[RealDictRow, None] = cursor.fetchone()
-
-                results = {"results": res}
-
-                return results
-
-    async def modificar_materias(
-        self, pk_id_materia: str, data: InputModificacionMateria
+    async def modificar_notas(
+        self, pk_id_nota: str, data: InputModificacionNota
     ) -> Dict[str, Any]:
         query = """
-            UPDATE public.tbl_materias
+            UPDATE public.tbl_notas
             SET
-                nombre_materia = %(nombre_materia)s,
-                descripcion = %(descripcion)s
+                nota = %(nota)s
             WHERE
-                pk_id_materia = %(pk_id_materia)s
-            RETURNING pk_id_materia;
+                pk_id_nota = %(pk_id_nota)s
+            RETURNING pk_id_nota;
         """
         with self._open_connection() as conexion:
             with conexion.cursor(cursor_factory=RealDictCursor) as cursor:
                 cursor.execute(
                     query,
-                    {
-                        "pk_id_materia": pk_id_materia,
-                        "nombre_materia": data.nombre_materia,
-                        "descripcion": data.descripcion,
-                    },
+                    {"pk_id_nota": pk_id_nota, "nota": data.nota},
                 )
 
                 res: Union[RealDictRow, None] = cursor.fetchone()

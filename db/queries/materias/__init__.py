@@ -161,3 +161,31 @@ class MateriasQueries(Connection):
                 results = {"results": res}
 
                 return results
+
+    async def asignar_curso_materias(
+        self, pk_id_materia: int, pk_id_curso: int
+    ) -> Dict[str, Any]:
+        """Metodo para asignarle un curso a la materia o a la inversa"""
+
+        query = """
+            INSERT INTO public.u_tbl_cursos_materias(
+                fk_id_materia,
+                fk_id_curso
+            )
+            VALUES (
+                %(fk_id_materia)s,
+                %(fk_id_curso)s
+            )
+            RETURNING pk_relacion_curso_materia;
+        """
+        with self._open_connection(1) as conexion:
+            with conexion.cursor(cursor_factory=RealDictCursor) as cursor:
+                cursor.execute(
+                    query, {"fk_id_materia": pk_id_materia, "fk_id_curso": pk_id_curso}
+                )
+
+                res: Union[RealDictRow, None] = cursor.fetchone()
+
+                results = {"results": res}
+
+                return results

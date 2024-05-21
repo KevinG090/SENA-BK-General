@@ -66,3 +66,9 @@ class InputModificacionUsuario(BaseModel):
     def change_return(cls, v: TipoUsuarios):
         """"""
         return int(v.value)
+
+class InputAsignacionUsuariosCursos(BaseModel):
+    """"""
+
+    pk_id_usuario: int = Field(..., examples=["5"])
+    pk_id_curso: int = Field(..., examples=["6"])
