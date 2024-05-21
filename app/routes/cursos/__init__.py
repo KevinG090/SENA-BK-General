@@ -3,7 +3,8 @@
 from typing import Optional
 
 from fastapi import APIRouter
-from psycopg2.errors import DatabaseError, Error as PGError
+from psycopg2.errors import DatabaseError
+from psycopg2.errors import Error as PGError
 
 from db.queries.cursos import CursosQueries
 from schemas.responses_model.common import (
@@ -11,8 +12,8 @@ from schemas.responses_model.common import (
     EnumErrors,
     EnumMsg,
     ErrorResponse,
+    ExceptionResponse,
     ResponseBase,
-    ExceptionResponse
 )
 from schemas.responses_model.cursos import InputCreacionCurso, InputModificacionCurso
 
@@ -40,7 +41,7 @@ async def get_list_courses(
             status=True,
             obj=results,
         )
-    except (DatabaseError,PGError) as e:
+    except (DatabaseError, PGError) as e:
         raise ExceptionResponse(f"{EnumErrors.ERROR_QUERY.value}: {e}")
     except Exception as e:
         raise ExceptionResponse(f"{EnumErrors.ERROR_INESPERADO.value}: {e}")
@@ -60,7 +61,7 @@ async def create_cursos(curso: InputCreacionCurso):
             status=True,
             obj=results,
         )
-    except (DatabaseError,PGError) as e:
+    except (DatabaseError, PGError) as e:
         raise ExceptionResponse(f"{EnumErrors.ERROR_QUERY.value}: {e}")
     except Exception as e:
         raise ExceptionResponse(f"{EnumErrors.ERROR_INESPERADO.value}: {e}")
@@ -93,7 +94,7 @@ async def edit_course(pk_id_curso: str, curso: InputModificacionCurso):
         )
     except ErrorResponse as exc_response:
         raise exc_response
-    except (DatabaseError,PGError) as e:
+    except (DatabaseError, PGError) as e:
         raise ExceptionResponse(f"{EnumErrors.ERROR_QUERY.value}: {e}")
     except Exception as e:
         raise ExceptionResponse(f"{EnumErrors.ERROR_INESPERADO.value}: {e}")

@@ -1,17 +1,19 @@
 from typing import Optional
 
 from fastapi import APIRouter
-from psycopg2.errors import DatabaseError, Error as PGError
+from psycopg2.errors import DatabaseError
+from psycopg2.errors import Error as PGError
+
 from db.queries.notas import NotasQueries
-from schemas.responses_model.notas import InputCreacionNota, InputModificacionNota
 from schemas.responses_model.common import (
     DetailErrorObj,
     EnumErrors,
     EnumMsg,
     ErrorResponse,
-    ResponseBase,
     ExceptionResponse,
+    ResponseBase,
 )
+from schemas.responses_model.notas import InputCreacionNota, InputModificacionNota
 
 router = APIRouter()
 

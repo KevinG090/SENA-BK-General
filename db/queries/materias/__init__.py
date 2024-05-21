@@ -36,9 +36,7 @@ class MateriasQueries(Connection):
                 nombre_materia.upper() if not nombre_materia is None else None
             ),
             "pk_id_curso": pk_id_curso,
-            "nombre_curso": (
-                nombre_curso.upper() if not nombre_curso is None else None
-            ),
+            "nombre_curso": nombre_curso.upper() if not nombre_curso is None else None,
         }
 
         query = """

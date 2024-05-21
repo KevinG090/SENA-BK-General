@@ -94,7 +94,7 @@ class UsersQueries(Connection):
 
     async def verificar_usuarios(self, pk_id_usuario: str) -> Dict[str, Any]:
         query = """
-            SELECT 
+            SELECT
                 pk_id_usuario,
                 nombre_usuario,
                 celular,

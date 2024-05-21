@@ -2,7 +2,7 @@
 
 from fastapi import APIRouter
 
-from app.routes import cursos, eventos, login, materias, users, notas
+from app.routes import cursos, eventos, login, materias, notas, users
 
 router = APIRouter()
 

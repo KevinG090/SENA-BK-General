@@ -135,13 +135,11 @@ class ErrorResponse(Exception):
 
 
 class ExceptionResponse(ErrorResponse):
-
     def __init__(
         self,
         error_msg: str,
         error_status: int = 500,
     ):
-
         super().__init__(
             "Peticion fallida",
             error_status,

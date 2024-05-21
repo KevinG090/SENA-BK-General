@@ -3,7 +3,8 @@
 from typing import Optional
 
 from fastapi import APIRouter
-from psycopg2.errors import DatabaseError, Error as PGError
+from psycopg2.errors import DatabaseError
+from psycopg2.errors import Error as PGError
 
 from db.queries.materias import MateriasQueries
 from schemas.responses_model.common import (
@@ -11,13 +12,13 @@ from schemas.responses_model.common import (
     EnumErrors,
     EnumMsg,
     ErrorResponse,
-    ResponseBase,
     ExceptionResponse,
+    ResponseBase,
 )
 from schemas.responses_model.materias import (
+    InputAsignacionMateriasCursos,
     InputCreacionMaterias,
     InputModificacionMateria,
-    InputAsignacionMateriasCursos,
 )
 
 router = APIRouter()

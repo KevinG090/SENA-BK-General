@@ -7,10 +7,7 @@ from psycopg2.extras import RealDictCursor, RealDictRow
 
 from db.connection_optional import Connection
 from db.utils import Json_pyscopg2
-from schemas.responses_model.notas import (
-    InputCreacionNota,
-    InputModificacionNota,
-)
+from schemas.responses_model.notas import InputCreacionNota, InputModificacionNota
 
 
 class NotasQueries(Connection):
@@ -37,9 +34,7 @@ class NotasQueries(Connection):
                 nombre_materia.upper() if not nombre_materia is None else None
             ),
             "pk_id_curso": pk_id_curso,
-            "nombre_curso": (
-                nombre_curso.upper() if not nombre_curso is None else None
-            ),
+            "nombre_curso": nombre_curso.upper() if not nombre_curso is None else None,
             "pk_id_usuario": pk_id_usuario,
         }
 
@@ -116,7 +111,7 @@ class NotasQueries(Connection):
         self, pk_relacion_usuario_curso: int, pk_relacion_curso_materia: int
     ) -> Dict[str, Any]:
         query = """
-            SELECT 
+            SELECT
                 tbl_usuarios.pk_id_usuario,
                 tbl_usuarios.nombre_usuario,
                 tbl_materias.nombre_materia,

@@ -67,6 +67,7 @@ class InputModificacionUsuario(BaseModel):
         """"""
         return int(v.value)
 
+
 class InputAsignacionUsuariosCursos(BaseModel):
     """"""
 

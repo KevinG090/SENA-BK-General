@@ -1,5 +1,6 @@
 from fastapi import APIRouter
-from psycopg2.errors import DatabaseError, Error as PGError
+from psycopg2.errors import DatabaseError
+from psycopg2.errors import Error as PGError
 
 from db.queries.login import LoginQueries
 from schemas.responses_model.common import (
@@ -7,8 +8,8 @@ from schemas.responses_model.common import (
     EnumErrors,
     EnumMsg,
     ErrorResponse,
-    ResponseBase,
     ExceptionResponse,
+    ResponseBase,
 )
 
 router = APIRouter()
