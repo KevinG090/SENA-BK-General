@@ -43,7 +43,8 @@ class MateriasQueries(Connection):
             SELECT
                 tbl_materias.*,
 				tbl_cursos.pk_id_curso,
-				tbl_cursos.nombre_curso
+				tbl_cursos.nombre_curso,
+                u_tbl_cursos_materias.pk_relacion_curso_materia
             FROM public.tbl_materias
             INNER JOIN u_tbl_cursos_materias ON (
                 tbl_materias.pk_id_materia = u_tbl_cursos_materias.fk_id_materia

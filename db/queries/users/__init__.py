@@ -21,30 +21,41 @@ class UsersQueries(Connection):
         offset: int = 0,
         pk_id_usuario: Optional[str] = None,
         nombre_usuario: Optional[str] = None,
+        pk_id_curso: Optional[str] = None,
     ) -> Dict[str, Any]:
+
+        conditions = [
+            " pk_id_usuario::TEXT LIKE COALESCE('%%'||%(pk_id_usuario)s||'%%',pk_id_usuario::TEXT)",
+            " UPPER(nombre_usuario) LIKE COALESCE('%%'||%(nombre_usuario)s||'%%',UPPER(nombre_usuario))",
+        ]
         data = {
             "pk_id_usuario": pk_id_usuario,
             "nombre_usuario": (
                 nombre_usuario.upper() if not nombre_usuario is None else None
             ),
         }
+        if pk_id_curso:
+            data.update({"pk_id_curso": pk_id_curso,})
+            conditions.append("pk_id_curso = COALESCE(%(pk_id_curso)s,pk_id_curso)")
 
-        query = """
+        query = f"""
             SELECT
                 pk_id_usuario,
                 nombre_usuario,
                 correo,
-                fk_id_tipo_usuario
+                fk_id_tipo_usuario,
+                tbl_tipo_usuarios.nombre_tipo_usuario AS tipo_usuario,
+                COALESCE(u_tbl_usuarios_cursos.pk_relacion_usuario_curso,null) as pk_relacion_usuario_cursos
             FROM public.tbl_usuarios
-            WHERE
-                pk_id_usuario::TEXT LIKE COALESCE(
-                    '%%'||%(pk_id_usuario)s||'%%',
-                    pk_id_usuario::TEXT
-                )
-                AND UPPER(nombre_usuario) LIKE COALESCE(
-                    '%%'||%(nombre_usuario)s||'%%',
-                    UPPER(nombre_usuario)
-                )
+            INNER JOIN tbl_tipo_usuarios
+                ON (tbl_usuarios.fk_id_tipo_usuario = tbl_tipo_usuarios.pk_id_tipo_usuario)
+            LEFT JOIN u_tbl_usuarios_cursos ON (
+                tbl_usuarios.pk_id_usuario = u_tbl_usuarios_cursos.fk_id_usuario
+            )
+            LEFT JOIN tbl_cursos ON (
+                u_tbl_usuarios_cursos.fk_id_curso = tbl_cursos.pk_id_curso
+            )
+            WHERE {"AND ".join(conditions)}
             ORDER BY pk_id_usuario DESC
         """
 

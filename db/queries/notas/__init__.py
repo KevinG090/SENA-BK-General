@@ -43,7 +43,9 @@ class NotasQueries(Connection):
                 ARRAY_AGG(tbl_notas.nota) AS notas,
                 tbl_usuarios.nombre_usuario,
                 tbl_cursos.nombre_curso,
-                tbl_materias.nombre_materia
+                tbl_materias.nombre_materia,
+                tbl_notas.fk_relacion_usuario_curso,
+                tbl_notas.fk_relacion_curso_materia
             FROM public.tbl_notas
             INNER JOIN u_tbl_usuarios_cursos ON (
                 tbl_notas.fk_relacion_usuario_curso = u_tbl_usuarios_cursos.pk_relacion_usuario_curso
@@ -88,7 +90,9 @@ class NotasQueries(Connection):
 				tbl_usuarios.pk_id_usuario,
 				tbl_cursos.nombre_curso,
 				tbl_materias.nombre_materia,
-				tbl_materias.pk_id_materia
+				tbl_materias.pk_id_materia,
+                tbl_notas.fk_relacion_usuario_curso,
+                tbl_notas.fk_relacion_curso_materia
             ORDER BY notas DESC
         """
 
@@ -124,7 +128,7 @@ class NotasQueries(Connection):
                 u_tbl_usuarios_cursos.fk_id_curso = u_tbl_cursos_materias.fk_id_curso
             )
             INNER JOIN tbl_cursos ON (
-                u_tbl_usuarios_cursos.fk_id_curso = tbl_cursos.pk_id_curso
+                u_tbl_cursos_materias.fk_id_curso = tbl_cursos.pk_id_curso
                 AND u_tbl_usuarios_cursos.fk_id_curso = tbl_cursos.pk_id_curso
             )
             INNER JOIN tbl_materias ON (

@@ -30,6 +30,7 @@ async def get_list_users(
     page: int = 1,
     pk_id_usuario: Optional[str] = None,
     nombre_usuario: Optional[str] = None,
+    pk_id_curso: Optional[str] = None,
 ):
     """"""
     try:
@@ -39,6 +40,7 @@ async def get_list_users(
             offset,
             pk_id_usuario,
             nombre_usuario,
+            pk_id_curso,
         )
         res = ResponseBase(
             msg=f"{EnumMsg.CONSULTA_PAGINADA.value} exitosa",
