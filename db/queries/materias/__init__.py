@@ -21,7 +21,7 @@ class MateriasQueries(Connection):
         register_adapter(dict, Json_pyscopg2)
 
     # @staticmethod
-    async def lista_paginada_materias(
+    async def lista_paginada_materias_cursos(
         self,
         limit: int = 10,
         offset: int = 0,
@@ -68,6 +68,51 @@ class MateriasQueries(Connection):
                 AND UPPER(nombre_curso) LIKE COALESCE(
                     '%%'||%(nombre_curso)s||'%%',
                     UPPER(nombre_curso)
+                )
+            ORDER BY pk_id_materia DESC
+        """
+
+        with self._open_connection(1) as conexion:
+            with conexion.cursor(
+                cursor_factory=RealDictCursor,
+                name="consulta_paginada_materias",
+                scrollable=True,
+            ) as cursor:
+                cursor.execute(query, data)
+                cursor.scroll(offset)
+
+                res: List[RealDictRow] = cursor.fetchmany(limit)
+
+                results = {"next_exist": bool(cursor.fetchone()), "results": res}
+
+                return results
+            
+    async def lista_paginada_materias(
+        self,
+        limit: int = 10,
+        offset: int = 0,
+        pk_id_materia: Optional[str] = None,
+        nombre_materia: Optional[str] = None,
+    ) -> Dict[str, Any]:
+        data = {
+            "pk_id_materia": pk_id_materia,
+            "nombre_materia": (
+                nombre_materia.upper() if not nombre_materia is None else None
+            ),
+        }
+
+        query = """
+            SELECT
+                *
+            FROM public.tbl_materias
+            WHERE
+                pk_id_materia::TEXT LIKE COALESCE(
+                    '%%'||%(pk_id_materia)s||'%%',
+                    pk_id_materia::TEXT
+                )
+                AND UPPER(nombre_materia) LIKE COALESCE(
+                    '%%'||%(nombre_materia)s||'%%',
+                    UPPER(nombre_materia)
                 )
             ORDER BY pk_id_materia DESC
         """

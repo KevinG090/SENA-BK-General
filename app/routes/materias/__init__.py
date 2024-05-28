@@ -24,8 +24,8 @@ from schemas.responses_model.materias import (
 router = APIRouter()
 
 
-@router.get("/listar-materias")
-async def get_list_topics(
+@router.get("/listar-materias-cursos")
+async def get_list_topics_courses(
     limit: int = 10,
     page: int = 1,
     pk_id_materia: Optional[str] = None,
@@ -36,13 +36,42 @@ async def get_list_topics(
     """"""
     try:
         offset = (page - 1) * limit
-        results = await MateriasQueries().lista_paginada_materias(
+        results = await MateriasQueries().lista_paginada_materias_cursos(
             limit,
             offset,
             pk_id_materia,
             nombre_materia,
             pk_id_curso,
             nombre_curso,
+        )
+        res = ResponseBase(
+            msg=f"{EnumMsg.CONSULTA_PAGINADA.value} exitosa",
+            codigo=str(200),
+            status=True,
+            obj=results,
+        )
+    except (DatabaseError, PGError) as e:
+        raise ExceptionResponse(f"{EnumErrors.ERROR_QUERY.value}: {e}")
+    except Exception as e:
+        raise ExceptionResponse(f"{EnumErrors.ERROR_INESPERADO.value}: {e}")
+
+    return res
+
+@router.get("/listar-materias")
+async def get_list_topics(
+    limit: int = 10,
+    page: int = 1,
+    pk_id_materia: Optional[str] = None,
+    nombre_materia: Optional[str] = None,
+):
+    """"""
+    try:
+        offset = (page - 1) * limit
+        results = await MateriasQueries().lista_paginada_materias(
+            limit,
+            offset,
+            pk_id_materia,
+            nombre_materia,
         )
         res = ResponseBase(
             msg=f"{EnumMsg.CONSULTA_PAGINADA.value} exitosa",
