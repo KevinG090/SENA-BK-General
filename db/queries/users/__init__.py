@@ -112,8 +112,12 @@ class UsersQueries(Connection):
                 correo,
                 identificacion,
                 observaciones,
-                fk_id_tipo_usuario
+                fk_id_tipo_usuario,
+                COALESCE(u_tbl_usuarios_cursos.fk_id_curso,null) AS fk_id_curso 
             FROM public.tbl_usuarios
+            LEFT JOIN u_tbl_usuarios_cursos ON (
+                tbl_usuarios.pk_id_usuario = u_tbl_usuarios_cursos.fk_id_usuario
+            )
             WHERE
                 pk_id_usuario = %(pk_id_usuario)s
             ORDER BY pk_id_usuario DESC
