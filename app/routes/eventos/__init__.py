@@ -104,3 +104,22 @@ async def edit_events(pk_id_evento: str, evento: InputModificacionEventos):
         raise ExceptionResponse(f"{EnumErrors.ERROR_INESPERADO.value}: {e}")
 
     return res
+
+@router.delete("/eliminar-eventos")
+async def delete_events(pk_id_evento: str):
+    """"""
+    try:
+        results = await EventosQueries().eliminar_eventos(pk_id_evento)
+
+        res = ResponseBase(
+            msg=f"{EnumMsg.ELIMINACION.value} exitosa",
+            codigo=str(200),
+            status=True,
+            obj=results,
+        )
+    except (DatabaseError, PGError) as e:
+        raise ExceptionResponse(f"{EnumErrors.ERROR_QUERY.value}: {e}")
+    except Exception as e:
+        raise ExceptionResponse(f"{EnumErrors.ERROR_INESPERADO.value}: {e}")
+
+    return res
