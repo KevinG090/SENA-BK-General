@@ -19,6 +19,7 @@ from schemas.responses_model.materias import (
     InputAsignacionMateriasCursos,
     InputCreacionMaterias,
     InputModificacionMateria,
+    InputEliminarAsignacionMateriasCursos,
 )
 
 router = APIRouter()
@@ -152,6 +153,27 @@ async def assign_course_subjects(data: InputAsignacionMateriasCursos):
 
         res = ResponseBase(
             msg=f"{EnumMsg.ASIGNACION.value} exitosa",
+            codigo=str(200),
+            status=True,
+            obj=results,
+        )
+    except (DatabaseError, PGError) as e:
+        raise ExceptionResponse(f"{EnumErrors.ERROR_QUERY.value}: {e}")
+    except Exception as e:
+        raise ExceptionResponse(f"{EnumErrors.ERROR_INESPERADO.value}: {e}")
+
+    return res
+
+@router.delete("/eliminar-relacion-curso-materias")
+async def delete_assign_course_subjects(data: InputEliminarAsignacionMateriasCursos):
+    """"""
+    try:
+        results = await MateriasQueries().eliminar_relacion_curso_materias(
+            data.fk_id_materia, data.fk_id_curso
+        )
+
+        res = ResponseBase(
+            msg=f"{EnumMsg.ELIMINACION.value} exitosa",
             codigo=str(200),
             status=True,
             obj=results,

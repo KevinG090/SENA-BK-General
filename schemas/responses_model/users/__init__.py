@@ -73,3 +73,9 @@ class InputAsignacionUsuariosCursos(BaseModel):
 
     pk_id_usuario: int = Field(..., examples=["5"])
     pk_id_curso: int = Field(..., examples=["6"])
+
+class InputEliminarAsignacionUsuariosCursos(BaseModel):
+    """"""
+
+    fk_id_usuario: int = Field(..., examples=["5"])
+    fk_id_curso: int = Field(..., examples=["6"])

@@ -35,3 +35,9 @@ class InputAsignacionMateriasCursos(BaseModel):
 
     pk_id_materia: int = Field(..., examples=["5"])
     pk_id_curso: int = Field(..., examples=["6"])
+
+class InputEliminarAsignacionMateriasCursos(BaseModel):
+    """"""
+
+    fk_id_materia: int = Field(..., examples=["5"])
+    fk_id_curso: int = Field(..., examples=["6"])

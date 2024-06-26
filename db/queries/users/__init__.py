@@ -191,7 +191,7 @@ class UsersQueries(Connection):
             )
             RETURNING pk_relacion_usuario_curso;
         """
-        with self._open_connection(1) as conexion:
+        with self._open_connection() as conexion:
             with conexion.cursor(cursor_factory=RealDictCursor) as cursor:
                 cursor.execute(
                     query, {"fk_id_usuario": pk_id_usuario, "fk_id_curso": pk_id_curso}
@@ -202,3 +202,20 @@ class UsersQueries(Connection):
                 results = {"results": res}
 
                 return results
+
+    async def eliminar_relacion_curso_usuario(
+        self, fk_id_usuario: int, fk_id_curso: int
+    ) -> Dict[str, Any]:
+        """Metodo para asignarle un curso al usuario"""
+
+        query = """
+            DELETE FROM public.u_tbl_usuarios_cursos
+            WHERE fk_id_usuario = %(fk_id_usuario)s AND fk_id_curso = %(fk_id_curso)s;
+        """
+        with self._open_connection() as conexion:
+            with conexion.cursor() as cursor:
+                cursor.execute(
+                    query, {"fk_id_usuario": fk_id_usuario, "fk_id_curso": fk_id_curso}
+                )
+                
+                return {"delete_item":True}

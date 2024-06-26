@@ -19,6 +19,7 @@ from schemas.responses_model.users import (
     InputAsignacionUsuariosCursos,
     InputCreacionUsers,
     InputModificacionUsuario,
+    InputEliminarAsignacionUsuariosCursos,
 )
 
 router = APIRouter()
@@ -151,6 +152,27 @@ async def assign_users_courses(data: InputAsignacionUsuariosCursos):
 
         res = ResponseBase(
             msg=f"{EnumMsg.ASIGNACION.value} exitosa",
+            codigo=str(200),
+            status=True,
+            obj=results,
+        )
+    except (DatabaseError, PGError) as e:
+        raise ExceptionResponse(f"{EnumErrors.ERROR_QUERY.value}: {e}")
+    except Exception as e:
+        raise ExceptionResponse(f"{EnumErrors.ERROR_INESPERADO.value}: {e}")
+
+    return res
+
+@router.delete("/eliminar-relacion-usuarios-cursos")
+async def delete_assign_users_courses(data: InputEliminarAsignacionUsuariosCursos):
+    """"""
+    try:
+        results = await UsersQueries().eliminar_relacion_curso_usuario(
+            data.fk_id_usuario, data.fk_id_curso
+        )
+
+        res = ResponseBase(
+            msg=f"{EnumMsg.ELIMINACION.value} exitosa",
             codigo=str(200),
             status=True,
             obj=results,

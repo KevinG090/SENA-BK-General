@@ -144,7 +144,7 @@ class MateriasQueries(Connection):
             )
             RETURNING pk_id_materia;
         """
-        with self._open_connection(1) as conexion:
+        with self._open_connection() as conexion:
             with conexion.cursor(cursor_factory=RealDictCursor) as cursor:
                 cursor.execute(query, data.dict())
 
@@ -222,7 +222,7 @@ class MateriasQueries(Connection):
             )
             RETURNING pk_relacion_curso_materia;
         """
-        with self._open_connection(1) as conexion:
+        with self._open_connection() as conexion:
             with conexion.cursor(cursor_factory=RealDictCursor) as cursor:
                 cursor.execute(
                     query, {"fk_id_materia": pk_id_materia, "fk_id_curso": pk_id_curso}
@@ -233,3 +233,20 @@ class MateriasQueries(Connection):
                 results = {"results": res}
 
                 return results
+
+    async def eliminar_relacion_curso_materias(
+        self, fk_id_materia: int, fk_id_curso: int
+    ) -> Dict[str, Any]:
+        """Metodo para asignarle un curso a la materia o a la inversa"""
+
+        query = """
+            DELETE FROM public.u_tbl_cursos_materias
+            WHERE fk_id_materia = %(fk_id_materia)s AND fk_id_curso = %(fk_id_curso)s;
+        """
+        with self._open_connection() as conexion:
+            with conexion.cursor() as cursor:
+                cursor.execute(
+                    query, {"fk_id_materia": fk_id_materia, "fk_id_curso": fk_id_curso}
+                )
+
+                return {"delete_item":True}
