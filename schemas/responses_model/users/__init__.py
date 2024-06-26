@@ -54,12 +54,12 @@ class InputModificacionUsuario(BaseModel):
         default=None, examples=[TipoUsuarios.ESTUDIANTE.value]
     )
 
-    @field_validator("identificacion")
+    @field_validator("identificacion", "fk_id_tipo_usuario", "celular", mode="before")
     @classmethod
     def validate_items(cls, v: Any):
         """"""
         new_val = validate_type_number(v)
-        return v
+        return str(v)
 
     @field_validator("fk_id_tipo_usuario", mode="after")
     @classmethod
@@ -73,6 +73,7 @@ class InputAsignacionUsuariosCursos(BaseModel):
 
     pk_id_usuario: int = Field(..., examples=["5"])
     pk_id_curso: int = Field(..., examples=["6"])
+
 
 class InputEliminarAsignacionUsuariosCursos(BaseModel):
     """"""
