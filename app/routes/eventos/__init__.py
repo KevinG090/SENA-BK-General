@@ -105,6 +105,7 @@ async def edit_events(pk_id_evento: str, evento: InputModificacionEventos):
 
     return res
 
+
 @router.delete("/eliminar-eventos")
 async def delete_events(pk_id_evento: str):
     """"""

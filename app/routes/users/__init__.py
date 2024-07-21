@@ -18,8 +18,8 @@ from schemas.responses_model.common import (
 from schemas.responses_model.users import (
     InputAsignacionUsuariosCursos,
     InputCreacionUsers,
-    InputModificacionUsuario,
     InputEliminarAsignacionUsuariosCursos,
+    InputModificacionUsuario,
 )
 
 router = APIRouter()
@@ -162,6 +162,7 @@ async def assign_users_courses(data: InputAsignacionUsuariosCursos):
         raise ExceptionResponse(f"{EnumErrors.ERROR_INESPERADO.value}: {e}")
 
     return res
+
 
 @router.delete("/eliminar-relacion-usuarios-cursos")
 async def delete_assign_users_courses(data: InputEliminarAsignacionUsuariosCursos):

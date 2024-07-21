@@ -20,11 +20,11 @@ class LoginQueries(Connection):
     async def login_usuario(
         self,
         email: str,
-        passworld: str,
+        password: str,
     ) -> Union[RealDictRow, None]:
         data = {
             "correo": email,
-            "passworld": passworld,
+            "password": password,
         }
 
         query = """
@@ -50,7 +50,7 @@ class LoginQueries(Connection):
 			)
             WHERE
                 UPPER(users.correo) LIKE UPPER(%(correo)s)
-                AND users.contraseña = %(passworld)s
+                AND users.contraseña = %(password)s
 
         """
 

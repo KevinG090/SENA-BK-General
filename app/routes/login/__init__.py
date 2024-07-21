@@ -11,16 +11,19 @@ from schemas.responses_model.common import (
     ExceptionResponse,
     ResponseBase,
 )
+from schemas.responses_model.login import InputLogin
 
 router = APIRouter()
 
 
-@router.get("/verify")
-async def verify(email: str, passworld: str):
+@router.post("/verify")
+async def verify(input: InputLogin):
     """Metodo para el login"""
 
     try:
-        results = await LoginQueries().login_usuario(email=email, passworld=passworld)
+        results = await LoginQueries().login_usuario(
+            email=input.data.email, password=input.data.password
+        )
         if not results:
             raise ErrorResponse(
                 "No se encontro el usuario",

@@ -48,6 +48,9 @@ class Settings(BaseSettings):
     POOL_MIN_SIZE: int = Field(..., ge=0)
     POOL_MAX_IDLE: int = Field(..., ge=0)
 
+    APP_LLAVE_AES_ENCRYPT: str
+    APP_IV_AES_ENCRYPT: str
+
     @field_validator("SQLALCHEMY_DATABASE_READ_URI", mode="before")
     def assemble_db_connection_read(
         cls, value: Optional[str], values: ValidationInfo

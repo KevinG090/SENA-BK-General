@@ -23,10 +23,15 @@ class UsersQueries(Connection):
         nombre_usuario: Optional[str] = None,
         pk_id_curso: Optional[str] = None,
     ) -> Dict[str, Any]:
-
         conditions = [
-            " pk_id_usuario::TEXT LIKE COALESCE('%%'||%(pk_id_usuario)s||'%%',pk_id_usuario::TEXT)",
-            " UPPER(nombre_usuario) LIKE COALESCE('%%'||%(nombre_usuario)s||'%%',UPPER(nombre_usuario))",
+            (
+                " pk_id_usuario::TEXT LIKE"
+                " COALESCE('%%'||%(pk_id_usuario)s||'%%',pk_id_usuario::TEXT)"
+            ),
+            (
+                " UPPER(nombre_usuario) LIKE"
+                " COALESCE('%%'||%(nombre_usuario)s||'%%',UPPER(nombre_usuario))"
+            ),
         ]
         data = {
             "pk_id_usuario": pk_id_usuario,
@@ -35,7 +40,11 @@ class UsersQueries(Connection):
             ),
         }
         if pk_id_curso:
-            data.update({"pk_id_curso": pk_id_curso,})
+            data.update(
+                {
+                    "pk_id_curso": pk_id_curso,
+                }
+            )
             conditions.append("pk_id_curso = COALESCE(%(pk_id_curso)s,pk_id_curso)")
 
         query = f"""
@@ -113,7 +122,7 @@ class UsersQueries(Connection):
                 identificacion,
                 observaciones,
                 fk_id_tipo_usuario,
-                COALESCE(u_tbl_usuarios_cursos.fk_id_curso,null) AS fk_id_curso 
+                COALESCE(u_tbl_usuarios_cursos.fk_id_curso,null) AS fk_id_curso
             FROM public.tbl_usuarios
             LEFT JOIN u_tbl_usuarios_cursos ON (
                 tbl_usuarios.pk_id_usuario = u_tbl_usuarios_cursos.fk_id_usuario
@@ -217,5 +226,5 @@ class UsersQueries(Connection):
                 cursor.execute(
                     query, {"fk_id_usuario": fk_id_usuario, "fk_id_curso": fk_id_curso}
                 )
-                
-                return {"delete_item":True}
+
+                return {"delete_item": True}
