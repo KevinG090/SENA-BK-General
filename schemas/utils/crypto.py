@@ -1,6 +1,5 @@
 """ Functions for use AES encyption """
 
-import hashlib
 import base64
 from abc import ABC, abstractmethod
 

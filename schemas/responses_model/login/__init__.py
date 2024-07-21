@@ -1,25 +1,27 @@
 """ Modelos de Login """
 import json
-
 from typing import Any, Optional
 
 from pydantic import BaseModel, Field, field_validator
-from schemas.utils.crypto import AESCipher
 
 from core.config import get_settings
+from schemas.utils.crypto import AESCipher
+
 
 class InputDataLogin(BaseModel):
     """"""
+
     email: str = Field(..., examples=["example@gmail.com"])
     password: str = Field(..., example=["123456789"])
+
 
 class InputLogin(BaseModel):
     """"""
 
-    data : InputDataLogin
+    data: InputDataLogin
 
-    @field_validator('data',mode='before')
-    def capture_data(cls,v:Any,values:Any):
+    @field_validator("data", mode="before")
+    def capture_data(cls, v: Any):
         try:
             cipher = AESCipher(
                 get_settings().APP_LLAVE_AES_ENCRYPT,
@@ -28,4 +30,3 @@ class InputLogin(BaseModel):
             return json.loads(cipher.decrypt(json.dumps(str(v))))
         except Exception as ex:
             raise ValueError("Error al descifrar la informacion del usuario")
-        

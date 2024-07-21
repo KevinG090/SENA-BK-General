@@ -86,7 +86,7 @@ class MateriasQueries(Connection):
                 results = {"next_exist": bool(cursor.fetchone()), "results": res}
 
                 return results
-            
+
     async def lista_paginada_materias(
         self,
         limit: int = 10,
@@ -249,4 +249,4 @@ class MateriasQueries(Connection):
                     query, {"fk_id_materia": fk_id_materia, "fk_id_curso": fk_id_curso}
                 )
 
-                return {"delete_item":True}
+                return {"delete_item": True}

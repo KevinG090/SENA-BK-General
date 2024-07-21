@@ -142,9 +142,7 @@ class EventosQueries(Connection):
 
                 return results
 
-    async def eliminar_eventos(
-        self, pk_id_evento: int
-    ) -> Dict[str, Any]:
+    async def eliminar_eventos(self, pk_id_evento: int) -> Dict[str, Any]:
         """Metodo para eliminar evento"""
 
         query = """
@@ -153,8 +151,6 @@ class EventosQueries(Connection):
         """
         with self._open_connection() as conexion:
             with conexion.cursor() as cursor:
-                cursor.execute(
-                    query, {"pk_id_evento": pk_id_evento}
-                )
-                
-                return {"delete_item":True}
+                cursor.execute(query, {"pk_id_evento": pk_id_evento})
+
+                return {"delete_item": True}

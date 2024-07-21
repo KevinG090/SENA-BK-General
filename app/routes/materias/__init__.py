@@ -18,8 +18,8 @@ from schemas.responses_model.common import (
 from schemas.responses_model.materias import (
     InputAsignacionMateriasCursos,
     InputCreacionMaterias,
-    InputModificacionMateria,
     InputEliminarAsignacionMateriasCursos,
+    InputModificacionMateria,
 )
 
 router = APIRouter()
@@ -57,6 +57,7 @@ async def get_list_topics_courses(
         raise ExceptionResponse(f"{EnumErrors.ERROR_INESPERADO.value}: {e}")
 
     return res
+
 
 @router.get("/listar-materias")
 async def get_list_topics(
@@ -163,6 +164,7 @@ async def assign_course_subjects(data: InputAsignacionMateriasCursos):
         raise ExceptionResponse(f"{EnumErrors.ERROR_INESPERADO.value}: {e}")
 
     return res
+
 
 @router.delete("/eliminar-relacion-curso-materias")
 async def delete_assign_course_subjects(data: InputEliminarAsignacionMateriasCursos):

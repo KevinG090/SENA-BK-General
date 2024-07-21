@@ -3,7 +3,6 @@ from psycopg2.errors import DatabaseError
 from psycopg2.errors import Error as PGError
 
 from db.queries.login import LoginQueries
-from schemas.responses_model.login import InputLogin
 from schemas.responses_model.common import (
     DetailErrorObj,
     EnumErrors,
@@ -12,6 +11,7 @@ from schemas.responses_model.common import (
     ExceptionResponse,
     ResponseBase,
 )
+from schemas.responses_model.login import InputLogin
 
 router = APIRouter()
 
