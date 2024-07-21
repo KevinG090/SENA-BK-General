@@ -3,6 +3,7 @@ from psycopg2.errors import DatabaseError
 from psycopg2.errors import Error as PGError
 
 from db.queries.login import LoginQueries
+from schemas.responses_model.login import InputLogin
 from schemas.responses_model.common import (
     DetailErrorObj,
     EnumErrors,
@@ -15,12 +16,14 @@ from schemas.responses_model.common import (
 router = APIRouter()
 
 
-@router.get("/verify")
-async def verify(email: str, passworld: str):
+@router.post("/verify")
+async def verify(input: InputLogin):
     """Metodo para el login"""
 
     try:
-        results = await LoginQueries().login_usuario(email=email, passworld=passworld)
+        results = await LoginQueries().login_usuario(
+            email=input.data.email, password=input.data.password
+        )
         if not results:
             raise ErrorResponse(
                 "No se encontro el usuario",

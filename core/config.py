@@ -38,7 +38,7 @@ class Settings(BaseSettings):
     POSTGRES_WRITE_USER: str
     POSTGRES_WRITE_PASSWORD: str
     POSTGRES_WRITE_DB: str
-
+    
     POSTGRES_URL_TEMP: str
 
     SQLALCHEMY_DATABASE_READ_URI: Optional[PostgresDsn] = None
@@ -47,6 +47,9 @@ class Settings(BaseSettings):
     POOL_MAX_SIZE: int = Field(..., gt=0)
     POOL_MIN_SIZE: int = Field(..., ge=0)
     POOL_MAX_IDLE: int = Field(..., ge=0)
+
+    APP_LLAVE_AES_ENCRYPT : str
+    APP_IV_AES_ENCRYPT : str
 
     @field_validator("SQLALCHEMY_DATABASE_READ_URI", mode="before")
     def assemble_db_connection_read(
